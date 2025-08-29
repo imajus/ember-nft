@@ -1,0 +1,374 @@
+[
+  {
+    "type": "constructor",
+    "payable": false,
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "OwnableInvalidOwner",
+    "inputs": [
+      {
+        "type": "address",
+        "name": "owner"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "OwnableUnauthorizedAccount",
+    "inputs": [
+      {
+        "type": "address",
+        "name": "account"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "ReentrancyGuardReentrantCall",
+    "inputs": []
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "CollectionCreated",
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "collectionId",
+        "indexed": true
+      },
+      {
+        "type": "address",
+        "name": "contractAddress",
+        "indexed": true
+      },
+      {
+        "type": "address",
+        "name": "creator",
+        "indexed": true
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "CollectionStatusUpdated",
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "collectionId",
+        "indexed": true
+      },
+      {
+        "type": "bool",
+        "name": "isActive",
+        "indexed": false
+      }
+    ]
+  },
+  {
+    "type": "event",
+    "anonymous": false,
+    "name": "OwnershipTransferred",
+    "inputs": [
+      {
+        "type": "address",
+        "name": "previousOwner",
+        "indexed": true
+      },
+      {
+        "type": "address",
+        "name": "newOwner",
+        "indexed": true
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "collectionInfo",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [
+      {
+        "type": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "uint256",
+        "name": "id"
+      },
+      {
+        "type": "address",
+        "name": "contractAddress"
+      },
+      {
+        "type": "address",
+        "name": "creator"
+      },
+      {
+        "type": "string",
+        "name": "name"
+      },
+      {
+        "type": "string",
+        "name": "symbol"
+      },
+      {
+        "type": "string",
+        "name": "prompt"
+      },
+      {
+        "type": "uint256",
+        "name": "maxSupply"
+      },
+      {
+        "type": "uint256",
+        "name": "mintPrice"
+      },
+      {
+        "type": "uint256",
+        "name": "createdAt"
+      },
+      {
+        "type": "bool",
+        "name": "isActive"
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "collections",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [
+      {
+        "type": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "address"
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "createCollection",
+    "constant": false,
+    "payable": false,
+    "inputs": [
+      {
+        "type": "string",
+        "name": "name"
+      },
+      {
+        "type": "string",
+        "name": "symbol"
+      },
+      {
+        "type": "string",
+        "name": "prompt"
+      },
+      {
+        "type": "string",
+        "name": "baseTokenURI"
+      },
+      {
+        "type": "uint256",
+        "name": "maxSupply"
+      },
+      {
+        "type": "uint256",
+        "name": "mintPrice"
+      },
+      {
+        "type": "address[]",
+        "name": "payees"
+      },
+      {
+        "type": "uint256[]",
+        "name": "shares"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "uint256"
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "creatorCollections",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [
+      {
+        "type": "address"
+      },
+      {
+        "type": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "uint256"
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "getAllCollections",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "tuple[]",
+        "components": [
+          {
+            "type": "uint256",
+            "name": "id"
+          },
+          {
+            "type": "address",
+            "name": "contractAddress"
+          },
+          {
+            "type": "address",
+            "name": "creator"
+          },
+          {
+            "type": "string",
+            "name": "name"
+          },
+          {
+            "type": "string",
+            "name": "symbol"
+          },
+          {
+            "type": "string",
+            "name": "prompt"
+          },
+          {
+            "type": "uint256",
+            "name": "maxSupply"
+          },
+          {
+            "type": "uint256",
+            "name": "mintPrice"
+          },
+          {
+            "type": "uint256",
+            "name": "createdAt"
+          },
+          {
+            "type": "bool",
+            "name": "isActive"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "getCollectionsByCreator",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [
+      {
+        "type": "address",
+        "name": "creator"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "uint256[]"
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "getTotalCollections",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "uint256"
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "owner",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "address"
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "platformFeePercent",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "uint256"
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "renounceOwnership",
+    "constant": false,
+    "payable": false,
+    "inputs": [],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "transferOwnership",
+    "constant": false,
+    "payable": false,
+    "inputs": [
+      {
+        "type": "address",
+        "name": "newOwner"
+      }
+    ],
+    "outputs": []
+  },
+  {
+    "type": "function",
+    "name": "updateCollectionStatus",
+    "constant": false,
+    "payable": false,
+    "inputs": [
+      {
+        "type": "uint256",
+        "name": "collectionId"
+      },
+      {
+        "type": "bool",
+        "name": "isActive"
+      }
+    ],
+    "outputs": []
+  }
+]

@@ -6,7 +6,7 @@
   "scripts": {
     "chain": "hardhat node",
     "compile": "hardhat compile",
-    "deploy": "hardhat ignition deploy ignition/modules/NFTMarketplace.js --network localhost"
+    "deploy": "hardhat ignition deploy ignition/modules/NFTMarketplace.js"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-ethers": "^4.0.0",
