@@ -20,7 +20,7 @@ export default {
     },
   },
   abiExporter: {
-    path: './src/abi',
+    path: './abi',
     runOnCompile: true,
     flat: true,
     format: 'json',

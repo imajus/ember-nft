@@ -1,108 +1,143 @@
+# AI-Powered NFT Launchpad
+
 ## Overview
 
-This is an Ethereum scaffold built with Solidity, IPFS, & Next.js with modern tooling including Hardhat v2 & Rocketh deployment system.
+An innovative decentralized platform that democratizes NFT creation through AI-powered generation. Creators can launch dynamic NFT collections using simple text prompts, while collectors experience the excitement of mystery minting - where unique AI artwork is generated at the moment of purchase.
 
-## Running this project
+## 🎯 Core Innovation
 
-### Gitpod
+Unlike traditional NFT platforms with pre-generated artwork, our system creates unique AI art in real-time during minting, providing:
 
-To deploy this project to Gitpod, follow these steps:
+- **Mystery Box Experience**: Collectors discover their unique NFT after minting
+- **Zero Upfront Costs**: Creators launch collections without pre-generating artwork
+- **AI-Powered Creativity**: Text prompts transform into stunning visual art
+- **Fair Economics**: Transparent fee structure with creator-first monetization
 
-1. Click this link to deploy
+## 🚀 Quick Start
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#github.com/dabit3/polygon-ethereum-nextjs-marketplace)
+### Prerequisites
 
-2. Import the RPC address given to you by GitPod into your MetaMask wallet
+- Node.js v18+ and npm
+- Git
+- MetaMask or Web3 wallet
 
-This endpoint will look something like this:
+### Installation
 
-```
-https://8545-copper-swordtail-j1mvhxv3.ws-eu18.gitpod.io/
-```
-
-The chain ID should be 1337. If you have a localhost rpc set up, you may need to overwrite it.
-
-![MetaMask RPC Import](wallet.png)
-
-#### Local setup
-
-To run this project locally, follow these steps:
-
-1. Clone the project locally, change into the directory, and install the dependencies:
+1. Clone the repository:
 
 ```sh
 git clone <repository-url>
-cd ethereum-scaffold
+cd ember
 npm install
 ```
 
-2. Start the local Hardhat node:
+2. Start the local blockchain (terminal 1):
 
 ```sh
+cd hardhat
 npm run chain
 ```
 
-3. Deploy contracts and export artifacts (in a separate terminal):
+3. Deploy smart contracts (terminal 2):
 
 ```sh
+cd hardhat
 npm run deploy
-npm run export
 ```
 
-4. Start the Next.js development server:
+4. Start the frontend application (terminal 3):
 
 ```sh
+cd frontend
 npm run dev
 ```
 
-## Development Workflow
+5. Open your browser at `http://localhost:5173`
 
-When working with smart contracts, follow this development flow:
+## 📦 Project Structure
 
-1. **Create/update smart contract** in the `/contracts` folder
-2. **(Optional) Create deployment script** in the `/deploy` folder using the Rocketh deployment system
-3. **Deploy contracts**: `npm run deploy`
-4. **Export artifacts**: `npm run export`
-
-After running these commands, the contract artifacts will be updated in `/contracts/artifacts.json` and available for use in the frontend.
-
-### Available Scripts
-
-- `npm run dev` - Start Next.js development server
-- `npm run chain` - Start local Hardhat node
-- `npm run compile` - Compile smart contracts
-- `npm run deploy` - Deploy contracts using Rocketh to localhost
-- `npm run export` - Export contract artifacts to `/contracts/artifacts.json`
-- `npm run build` - Build Next.js application for production
-- `npm run start` - Start Next.js production server
-- `npm run lint` - Run ESLint
-
-### Project Structure
+The project is organized as a monorepo with two main packages:
 
 ```
-contracts/          # Smart contracts and artifacts
-├── NFTMarketplace.sol
-└── artifacts.json   # Exported contract artifacts
-
-deploy/              # Rocketh deployment scripts
-└── 01_deploy_nft_marketplace.js
-
-pages/               # Next.js pages
-├── index.js         # Home page
-├── create-nft.js    # NFT creation
-├── dashboard.js     # Creator dashboard
-├── my-nfts.js       # User's NFTs
-└── resell-nft.js    # Resell NFTs
-
-rocketh.js           # Rocketh configuration
-hardhat.config.js    # Hardhat configuration
+ember/
+├── frontend/          # React-based web application
+│   ├── src/          # Application source code
+│   └── README.md     # Frontend documentation
+│
+├── hardhat/          # Smart contracts and blockchain
+│   ├── contracts/    # Solidity contracts
+│   └── README.md     # Smart contract documentation
+│
+└── PRD.md            # Product requirements document
 ```
 
-### Configuration
+## 🎨 Key Features
 
-To deploy to other networks, update the network configurations in `hardhat.config.js` and `rocketh.js`. For testnets or mainnet, you'll need to:
+### For Creators
 
-1. Add network configuration to both config files
-2. Set up private keys securely
-3. Configure RPC endpoints (e.g., Infura, Alchemy)
-4. Update the deploy script target network
+- **Simple Collection Launch**: Create NFT collections with just a text prompt
+- **No Technical Barriers**: User-friendly interface, no coding required
+- **Flexible Pricing**: Set your own prices and royalties
+- **Reference Images**: Optional visual guidance for AI generation
+
+### For Collectors
+
+- **Mystery Minting**: Discover unique AI art after purchase
+- **Transparent Pricing**: Clear breakdown of all fees
+- **Marketplace Trading**: Buy, sell, and resell NFTs
+- **Guaranteed Uniqueness**: Each NFT is one-of-a-kind
+
+### Platform Capabilities
+
+- **Real-time Generation**: AI creates artwork on-demand
+- **IPFS Storage**: Decentralized, permanent storage
+- **Event-Driven Architecture**: Automatic metadata updates
+- **Multi-wallet Support**: MetaMask, WalletConnect, and more
+
+## 💰 Economic Model
+
+Transparent fee structure where costs are added on top of creator prices:
+
+- **Creator Price**: 100% goes to the creator
+- **Platform Fee**: Small percentage for platform sustainability
+- **AI Generation Fee**: Fixed cost for image generation
+- **Storage Fee**: IPFS storage costs
+
+Example: If a creator sets 10 USDC, the total might be 13 USDC (10 to creator, 3 for platform services).
+
+## 🛠️ Technical Stack
+
+- **Frontend**: React, Vite, TailwindCSS, Web3 AppKit
+- **Smart Contracts**: Solidity, Hardhat, OpenZeppelin
+- **Storage**: IPFS for decentralized media storage
+- **AI Integration**: Event-driven image generation pipeline
+- **Networks**: Ethereum-compatible (Local, Somnia testnet/mainnet)
+
+## 📖 Documentation
+
+For detailed technical information and setup instructions, please refer to:
+
+- [Product Requirements Document](./PRD.md)
+- [Frontend Documentation](./frontend/README.md)
+- [Smart Contracts Documentation](./hardhat/README.md)
+
+## 🚧 Roadmap
+
+### Current (MVP)
+
+- ✅ Collection creation with AI prompts
+- ✅ Mystery box minting experience
+- ✅ Basic marketplace functionality
+- ✅ IPFS integration
+
+### Future Enhancements
+
+- 🔄 AI video NFT generation
+- 🔄 Cross-chain compatibility
+- 🔄 Advanced gamification mechanics
+- 🔄 DAO governance
+- 🔄 Metaverse integration
+
+## 📄 License
+
+MIT

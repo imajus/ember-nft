@@ -10,5 +10,12 @@
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["hardhat.config.js", "test", "src", "vite.config.js"]
+  "include": [
+    "hardhat/hardhat.config.js",
+    "hardhat/ignition/modules",
+    "hardhat/test",
+    "frontend/src",
+    "frontend/test",
+    "frontend/vite.config.js"
+  ]
 }
