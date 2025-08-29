@@ -1,96 +1,74 @@
-import { ethers } from 'ethers';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import {
-  useAppKit,
-  useAppKitProvider,
-  useAppKitAccount,
-} from '@reown/appkit/react';
-import { getNFTMarketplace } from '../lib/contracts';
+import { Link } from 'react-router-dom';
+import { useAppKit } from '@reown/appkit/react';
 
 export default function Home() {
-  const [nfts, setNfts] = useState([]);
-  const [loadingState, setLoadingState] = useState('not-loaded');
-  useEffect(() => {
-    loadNFTs();
-  }, []);
-  async function loadNFTs() {
-    const provider = new ethers.JsonRpcProvider();
-    const contract = await getNFTMarketplace(provider);
-    const data = await contract.fetchMarketItems();
-
-    const items = await Promise.all(
-      data.map(async (i) => {
-        const tokenUri = await contract.tokenURI(i.tokenId);
-        const meta = await axios.get(tokenUri);
-        let price = ethers.formatUnits(i.price.toString(), 'ether');
-        let item = {
-          price,
-          tokenId: i.tokenId.toNumber(),
-          seller: i.seller,
-          owner: i.owner,
-          image: meta.data.image,
-          name: meta.data.name,
-          description: meta.data.description,
-        };
-        return item;
-      })
-    );
-    setNfts(items);
-    setLoadingState('loaded');
-  }
   const { open } = useAppKit();
-  const { walletProvider } = useAppKitProvider('eip155');
-  const { isConnected } = useAppKitAccount();
 
-  async function buyNft(nft) {
-    if (!isConnected || !walletProvider) {
-      open();
-      return;
-    }
-
-    const provider = new ethers.BrowserProvider(walletProvider);
-    const signer = await provider.getSigner();
-    const contract = await getNFTMarketplace(signer);
-
-    const price = ethers.parseUnits(nft.price.toString(), 'ether');
-    const transaction = await contract.createMarketSale(nft.tokenId, {
-      value: price,
-    });
-    await transaction.wait();
-    loadNFTs();
-  }
-  if (loadingState === 'loaded' && !nfts.length)
-    return <h1 className="px-20 py-10 text-3xl">No items in marketplace</h1>;
   return (
-    <div className="flex justify-center">
-      <div className="px-4" style={{ maxWidth: '1600px' }}>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
-          {nfts.map((nft, i) => (
-            <div key={i} className="border shadow rounded-xl overflow-hidden">
-              <img src={nft.image} />
-              <div className="p-4">
-                <p
-                  style={{ height: '64px' }}
-                  className="text-2xl font-semibold"
-                >
-                  {nft.name}
-                </p>
-                <div style={{ height: '70px', overflow: 'hidden' }}>
-                  <p className="text-gray-400">{nft.description}</p>
-                </div>
-              </div>
-              <div className="p-4 bg-black">
-                <p className="text-2xl font-bold text-white">{nft.price} ETH</p>
-                <button
-                  className="mt-4 w-full bg-pink-500 text-white font-bold py-2 px-12 rounded"
-                  onClick={() => buyNft(nft)}
-                >
-                  Buy
-                </button>
-              </div>
-            </div>
-          ))}
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50">
+      <div className="container mx-auto px-4 py-16">
+        <div className="text-center mb-16">
+          <h1 className="text-6xl font-bold text-gray-800 mb-6">
+            Launch AI-Generated NFT Collections
+          </h1>
+          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+            Create unique NFT collections with AI-generated artwork. Simply provide a prompt and reference image, 
+            set your parameters, and let our AI create stunning, unique NFTs for your collection.
+          </p>
+          <div className="space-x-4">
+            <Link
+              to="/create"
+              className="inline-block bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:shadow-lg transition-all duration-200 transform hover:scale-105"
+            >
+              Create Collection
+            </Link>
+            <Link
+              to="/explore"
+              className="inline-block bg-white text-purple-600 border-2 border-purple-600 font-bold py-3 px-8 rounded-lg hover:bg-purple-50 transition-all duration-200"
+            >
+              Explore Collections
+            </Link>
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-8 mb-16">
+          <div className="bg-white rounded-xl p-8 shadow-lg">
+            <div className="text-purple-600 text-4xl mb-4">🎨</div>
+            <h3 className="text-xl font-bold mb-4">AI-Powered Generation</h3>
+            <p className="text-gray-600">
+              Leverage cutting-edge AI to generate unique artwork for every NFT in your collection. 
+              Each piece is one-of-a-kind and created from your custom prompts.
+            </p>
+          </div>
+          <div className="bg-white rounded-xl p-8 shadow-lg">
+            <div className="text-blue-600 text-4xl mb-4">⚡</div>
+            <h3 className="text-xl font-bold mb-4">Instant Deployment</h3>
+            <p className="text-gray-600">
+              Deploy your collection contract and start minting immediately. 
+              Our platform handles all the technical complexity for you.
+            </p>
+          </div>
+          <div className="bg-white rounded-xl p-8 shadow-lg">
+            <div className="text-green-600 text-4xl mb-4">💎</div>
+            <h3 className="text-xl font-bold mb-4">Fair Revenue Split</h3>
+            <p className="text-gray-600">
+              Keep the majority of your sales with transparent fee structure. 
+              Built-in royalty system ensures ongoing revenue from secondary sales.
+            </p>
+          </div>
+        </div>
+
+        <div className="text-center bg-white rounded-xl p-12 shadow-lg">
+          <h2 className="text-3xl font-bold mb-6">Ready to Launch Your Collection?</h2>
+          <p className="text-gray-600 mb-8">
+            Join creators who are already building the future of AI-generated NFTs
+          </p>
+          <button
+            onClick={() => open()}
+            className="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:shadow-lg transition-all duration-200 transform hover:scale-105"
+          >
+            Connect Wallet to Get Started
+          </button>
         </div>
       </div>
     </div>

@@ -29,12 +29,12 @@
 - [x] Add access control and ownership management
 - [x] Create event emission for mint tracking
 - [x] Add metadata update functionality for post-mint URI setting
-- [ ] Write comprehensive smart contract tests
+- [-] Write comprehensive smart contract tests
 - [x] Deploy contracts to Hardhat testnet
 
 ### Frontend - Core Pages
 
-- [ ] Set up React/Next.js project with Web3 wallet integration
+- [ ] Clean up existing React/Vite project from unrelated pages/components/styles
 - [ ] Create landing page with platform overview
 - [ ] Build collection browse/explore page
 - [ ] Implement collection creation wizard
@@ -44,7 +44,7 @@
   - [ ] Metadata management
 - [ ] Create individual collection view page
 - [ ] Build minting interface with cost breakdown
-- [ ] Add wallet connection flow (MetaMask, WalletConnect)
+- [ ] Add wallet connection flow (Reown)
 - [ ] Implement transaction status tracking
 - [ ] Create user dashboard for creators
 - [ ] Add collection management interface
