@@ -13,6 +13,10 @@
       },
       {
         "type": "string",
+        "name": "_prompt"
+      },
+      {
+        "type": "string",
         "name": "baseTokenURI"
       },
       {
@@ -495,6 +499,19 @@
   },
   {
     "type": "function",
+    "name": "getPrompt",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "type": "function",
     "name": "getTokenPrompt",
     "constant": true,
     "stateMutability": "view",
@@ -688,6 +705,19 @@
     "outputs": [
       {
         "type": "address"
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "prompt",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "string"
       }
     ]
   },

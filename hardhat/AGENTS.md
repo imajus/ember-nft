@@ -25,3 +25,7 @@
 - Async/await for contract interactions
 - Error handling: Try-catch blocks for contract calls, revert reason strings
 - Deployment: Use Hardhat Ignition modules in ignition/modules/
+
+## Special Instructions
+
+- Never start local network with `npx hardhat node` or `npm run chain`

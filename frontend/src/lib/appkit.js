@@ -1,11 +1,11 @@
 import { createAppKit } from '@reown/appkit/react';
 import { EthersAdapter } from '@reown/appkit-adapter-ethers';
-import { hardhat } from '@reown/appkit/networks';
+import { somniaTestnet } from '@reown/appkit/networks';
 
 // 1. Get projectId from environment variables
 const projectId = import.meta.env.VITE_REOWN_PROJECT_ID;
 
-const networks = [hardhat];
+const networks = [somniaTestnet];
 
 // 3. Create a metadata object - optional
 const metadata = {

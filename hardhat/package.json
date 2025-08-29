@@ -6,13 +6,17 @@
   "scripts": {
     "chain": "hardhat node",
     "compile": "hardhat compile",
-    "deploy": "hardhat ignition deploy ignition/modules/NFTMarketplace.js"
+    "deploy:test": "hardhat ignition deploy ignition/modules/NFTCollectionFactory.js",
+    "deploy:local": "hardhat ignition deploy ignition/modules/NFTCollectionFactory.js --network localhost",
+    "deploy:prod": "hardhat ignition deploy ignition/modules/NFTCollectionFactory.js --network somnia"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-ethers": "^4.0.0",
     "@nomicfoundation/hardhat-ignition-ethers": "^3.0.0",
+    "@nomicfoundation/hardhat-keystore": "^3.0.1",
     "@openzeppelin/contracts": "^5.4.0",
     "@solidstate/hardhat-abi-exporter": "^3.0.0",
+    "dotenv": "^17.2.1",
     "hardhat": "^3.0.1"
   }
 }

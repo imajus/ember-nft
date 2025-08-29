@@ -30,3 +30,7 @@
 - **Wallet**: Reown AppKit (@reown/appkit)
 - **Blockchain**: Ethers.js v6, support local/Somnia networks
 - **Contracts**: Dynamic loading based on chainId, error handling for missing deployments
+
+## Special Instructions
+
+- Never start development servier with `npm run dev` or `vite`

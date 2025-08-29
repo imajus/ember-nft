@@ -1,31 +1,37 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAppKit, useAppKitProvider, useAppKitAccount } from '@reown/appkit/react';
+import { useAppKit, useAppKitAccount } from '@reown/appkit/react';
+import { ethers } from 'ethers';
+import { getNFTCollectionFactory } from '../lib/contracts';
+import { useProvider } from '../hooks/useProvider';
 
 export default function Create() {
   const [formData, setFormData] = useState({
     name: '',
+    symbol: '',
     description: '',
     prompt: '',
     supply: '',
     price: '',
-    referenceImage: null
+    referenceImage: null,
   });
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
   const { open } = useAppKit();
-  const { walletProvider } = useAppKitProvider('eip155');
-  const { isConnected } = useAppKitAccount();
+  const { isConnected, address } = useAppKitAccount();
+  const { getSigner, isAvailable } = useProvider();
 
   const handleInputChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    if (error) setError('');
   };
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setFormData(prev => ({ ...prev, referenceImage: file }));
+      setFormData((prev) => ({ ...prev, referenceImage: file }));
     }
   };
 
@@ -37,20 +43,57 @@ export default function Create() {
     if (currentStep > 1) setCurrentStep(currentStep - 1);
   };
 
+  const generateSymbol = (name) => {
+    return name
+      .toUpperCase()
+      .replace(/[^A-Z0-9]/g, '')
+      .substring(0, 10);
+  };
+
   const handleSubmit = async () => {
-    if (!isConnected || !walletProvider) {
+    if (!isConnected || !isAvailable) {
       open();
       return;
     }
 
     setIsLoading(true);
+    setError('');
+
     try {
-      // TODO: Implement collection creation logic
-      console.log('Creating collection with data:', formData);
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate API call
+      const signer = await getSigner();
+      const factory = await getNFTCollectionFactory(signer);
+      // Generate symbol if not provided
+      const symbol = formData.symbol || generateSymbol(formData.name);
+      // Convert price to wei
+      const mintPrice = ethers.parseEther(formData.price);
+      const transaction = await factory.createCollection(
+        formData.name,
+        symbol,
+        formData.prompt,
+        'https://ipfs.io/ipfs/', // Temporary base URI
+        parseInt(formData.supply),
+        mintPrice
+      );
+      console.log('Transaction submitted:', transaction.hash);
+      // Wait for transaction confirmation
+      const receipt = await transaction.wait();
+      console.log('Transaction confirmed:', receipt);
+      // Get the collection ID from the event
+      const collectionCreatedEvent = receipt.logs.find(
+        (log) =>
+          log.topics[0] ===
+          ethers.id(
+            'CollectionCreated(uint256,address,address,string,string,uint256,uint256)'
+          )
+      );
+      if (collectionCreatedEvent) {
+        const collectionId = parseInt(collectionCreatedEvent.topics[1]);
+        console.log('Collection created with ID:', collectionId);
+      }
       navigate('/dashboard');
     } catch (error) {
       console.error('Error creating collection:', error);
+      setError(error.reason || error.message || 'Failed to create collection');
     } finally {
       setIsLoading(false);
     }
@@ -61,7 +104,9 @@ export default function Create() {
       case 1:
         return (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">Collection Details</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">
+              Collection Details
+            </h2>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Collection Name
@@ -69,10 +114,34 @@ export default function Create() {
               <input
                 type="text"
                 value={formData.name}
-                onChange={(e) => handleInputChange('name', e.target.value)}
+                onChange={(e) => {
+                  handleInputChange('name', e.target.value);
+                  // Auto-generate symbol
+                  if (!formData.symbol) {
+                    handleInputChange('symbol', generateSymbol(e.target.value));
+                  }
+                }}
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 placeholder="My AI Art Collection"
               />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Symbol
+              </label>
+              <input
+                type="text"
+                value={formData.symbol}
+                onChange={(e) =>
+                  handleInputChange('symbol', e.target.value.toUpperCase())
+                }
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                placeholder="MYAI"
+                maxLength="10"
+              />
+              <p className="text-sm text-gray-500 mt-1">
+                Short identifier for your collection (auto-generated from name)
+              </p>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -80,7 +149,9 @@ export default function Create() {
               </label>
               <textarea
                 value={formData.description}
-                onChange={(e) => handleInputChange('description', e.target.value)}
+                onChange={(e) =>
+                  handleInputChange('description', e.target.value)
+                }
                 rows={4}
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 placeholder="Describe your collection..."
@@ -91,7 +162,9 @@ export default function Create() {
       case 2:
         return (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">AI Generation Setup</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">
+              AI Generation Setup
+            </h2>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 AI Prompt
@@ -104,7 +177,8 @@ export default function Create() {
                 placeholder="Describe the art style and theme for your collection..."
               />
               <p className="text-sm text-gray-500 mt-2">
-                This prompt will be used to generate unique artwork for each NFT in your collection.
+                This prompt will be used to generate unique artwork for each NFT
+                in your collection.
               </p>
             </div>
             <div>
@@ -126,7 +200,9 @@ export default function Create() {
       case 3:
         return (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">Collection Parameters</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">
+              Collection Parameters
+            </h2>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Total Supply
@@ -166,11 +242,17 @@ export default function Create() {
       case 4:
         return (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">Review & Deploy</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">
+              Review & Deploy
+            </h2>
             <div className="bg-gray-50 rounded-lg p-6 space-y-4">
               <div>
                 <h3 className="font-semibold text-gray-800">Collection Name</h3>
                 <p className="text-gray-600">{formData.name}</p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-800">Symbol</h3>
+                <p className="text-gray-600">{formData.symbol}</p>
               </div>
               <div>
                 <h3 className="font-semibold text-gray-800">Description</h3>
@@ -201,7 +283,9 @@ export default function Create() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-2xl">
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-800 mb-4">Create AI Collection</h1>
+        <h1 className="text-4xl font-bold text-gray-800 mb-4">
+          Create AI Collection
+        </h1>
         <div className="flex items-center space-x-4">
           {[1, 2, 3, 4].map((step) => (
             <div key={step} className="flex items-center">
@@ -227,8 +311,14 @@ export default function Create() {
       </div>
 
       <div className="bg-white rounded-xl shadow-lg p-8">
+        {error && (
+          <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+            {error}
+          </div>
+        )}
+
         {renderStep()}
-        
+
         <div className="flex justify-between mt-8">
           <button
             onClick={prevStep}
@@ -237,11 +327,18 @@ export default function Create() {
           >
             Previous
           </button>
-          
+
           {currentStep === 4 ? (
             <button
               onClick={handleSubmit}
-              disabled={isLoading || !formData.name || !formData.prompt || !formData.supply || !formData.price}
+              disabled={
+                isLoading ||
+                !formData.name ||
+                !formData.symbol ||
+                !formData.prompt ||
+                !formData.supply ||
+                !formData.price
+              }
               className="px-8 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg transition-all duration-200 flex items-center"
             >
               {isLoading ? (
@@ -257,7 +354,10 @@ export default function Create() {
             <button
               onClick={nextStep}
               disabled={
-                (currentStep === 1 && (!formData.name || !formData.description)) ||
+                (currentStep === 1 &&
+                  (!formData.name ||
+                    !formData.symbol ||
+                    !formData.description)) ||
                 (currentStep === 2 && !formData.prompt) ||
                 (currentStep === 3 && (!formData.supply || !formData.price))
               }

@@ -87,6 +87,19 @@
   },
   {
     "type": "function",
+    "name": "PLATFORM_WALLET",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "address"
+      }
+    ]
+  },
+  {
+    "type": "function",
     "name": "collectionInfo",
     "constant": true,
     "stateMutability": "view",
@@ -185,14 +198,6 @@
       {
         "type": "uint256",
         "name": "mintPrice"
-      },
-      {
-        "type": "address[]",
-        "name": "payees"
-      },
-      {
-        "type": "uint256[]",
-        "name": "shares"
       }
     ],
     "outputs": [

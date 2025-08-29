@@ -1,34 +1,39 @@
 import { ethers } from 'ethers';
 
 /**
- * Get default provider based on environment configuration
- */
-export function getDefaultProvider() {
-  const hardhatRpcUrl = import.meta.env.VITE_HARDHAT_RPC_URL || 'http://127.0.0.1:8545';
-  
-  // Default to local hardhat network
-  return new ethers.JsonRpcProvider(hardhatRpcUrl);
-}
-
-/**
- * Get NFT Marketplace contract instance
+ * Get NFT Collection Factory contract instance
  * @param {ethers.ContractRunner} runner
  */
-export async function getNFTMarketplace(runner) {
+export async function getNFTCollectionFactory(runner) {
   try {
     const { chainId } = await runner.provider.getNetwork();
     const { default: addresses } = await import(
-      `../../ignition/deployments/chain-${chainId}/deployed_addresses.json`
+      `./deployments/chain-${chainId}/deployed_addresses.json`
     );
-    const { default: abi } = await import('../abi/NFTMarketplace.json');
+    const { default: abi } = await import('./abi/NFTCollectionFactory.json');
     return new ethers.Contract(
-      addresses['NFTMarketplaceModule#NFTMarketplace'],
+      addresses['NFTCollectionFactoryModule#NFTCollectionFactory'],
       abi,
       runner
     );
   } catch (error) {
-    console.error('Error loading contract:', error);
+    console.error('Error loading NFT Collection Factory contract:', error);
     console.warn('Make sure the contract is deployed to the current network');
+    throw error;
+  }
+}
+
+/**
+ * Get NFT Collection contract instance by address
+ * @param {string} contractAddress
+ * @param {ethers.ContractRunner} runner
+ */
+export async function getNFTCollection(contractAddress, runner) {
+  try {
+    const { default: abi } = await import('./abi/NFTCollection.json');
+    return new ethers.Contract(contractAddress, abi, runner);
+  } catch (error) {
+    console.error('Error loading NFT Collection contract:', error);
     throw error;
   }
 }
