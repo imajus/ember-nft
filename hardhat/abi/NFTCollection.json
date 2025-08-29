@@ -16,10 +16,6 @@
         "name": "_prompt"
       },
       {
-        "type": "string",
-        "name": "baseTokenURI"
-      },
-      {
         "type": "uint256",
         "name": "_maxSupply"
       },
@@ -134,25 +130,6 @@
       {
         "type": "uint256",
         "name": "tokenId"
-      }
-    ]
-  },
-  {
-    "type": "error",
-    "name": "FailedCall",
-    "inputs": []
-  },
-  {
-    "type": "error",
-    "name": "InsufficientBalance",
-    "inputs": [
-      {
-        "type": "uint256",
-        "name": "balance"
-      },
-      {
-        "type": "uint256",
-        "name": "needed"
       }
     ]
   },
@@ -714,19 +691,6 @@
       {
         "type": "bool",
         "name": "approved"
-      }
-    ],
-    "outputs": []
-  },
-  {
-    "type": "function",
-    "name": "setBaseURI",
-    "constant": false,
-    "payable": false,
-    "inputs": [
-      {
-        "type": "string",
-        "name": "newBaseURI"
       }
     ],
     "outputs": []

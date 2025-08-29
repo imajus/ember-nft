@@ -167,10 +167,6 @@
         "name": "prompt"
       },
       {
-        "type": "string",
-        "name": "baseTokenURI"
-      },
-      {
         "type": "uint256",
         "name": "maxSupply"
       },

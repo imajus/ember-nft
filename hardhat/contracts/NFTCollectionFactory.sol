@@ -40,7 +40,6 @@ contract NFTCollectionFactory is Ownable, ReentrancyGuard {
         string memory name,
         string memory symbol,
         string memory prompt,
-        string memory baseTokenURI,
         uint256 maxSupply,
         uint256 mintPrice
     ) external nonReentrant returns (uint256) {
@@ -66,7 +65,6 @@ contract NFTCollectionFactory is Ownable, ReentrancyGuard {
             name,
             symbol,
             prompt,
-            baseTokenURI,
             maxSupply,
             mintPrice,
             msg.sender,
@@ -95,8 +93,6 @@ contract NFTCollectionFactory is Ownable, ReentrancyGuard {
 
         return newCollectionId;
     }
-
-
 
     function getCollectionsByCreator(
         address creator
@@ -128,7 +124,7 @@ contract NFTCollectionFactory is Ownable, ReentrancyGuard {
         string memory newTokenURI
     ) external onlyOwner {
         require(collectionAddress != address(0), "Invalid collection address");
-        
+
         NFTCollection collection = NFTCollection(collectionAddress);
         collection.updateTokenURI(tokenId, newTokenURI);
     }

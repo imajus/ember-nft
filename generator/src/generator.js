@@ -26,10 +26,10 @@ export class NFTGenerator {
         `Starting generation for token ${tokenId} in collection ${collectionAddress}`
       );
       console.log(`Prompt: ${prompt}`);
-      
+
       const generatedImage = await this.aiGenerator.generateWithRetry(prompt);
       const imageName = `nft-${collectionAddress}-${tokenId}.png`;
-      
+
       const metadata = {
         name: `Token #${tokenId}`,
         description: `Generated NFT from collection ${collectionAddress}`,
@@ -50,31 +50,27 @@ export class NFTGenerator {
           },
         ],
       };
-      
+
       const upload = await this.ipfsService.uploadImageAndMetadata(
         generatedImage.buffer,
         metadata,
         imageName
       );
-      
+
       await this.blockchainListener.updateTokenURI(
         collectionAddress,
         tokenId,
-        upload.metadata.url
+        upload.metadata.hash
       );
-      
+
       console.log(
-        `Successfully generated and uploaded NFT for token ${tokenId}`
+        `✅ Successfully generated and uploaded NFT for token ${tokenId}`
       );
-      console.log(`Image: ${upload.image.url}`);
-      console.log(`Metadata: ${upload.metadata.url}`);
     } catch (error) {
       console.error(`Error processing token ${tokenId}:`, error);
       throw error;
     }
   }
-
-
 
   async cleanup() {
     try {

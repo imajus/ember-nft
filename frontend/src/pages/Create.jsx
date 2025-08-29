@@ -70,7 +70,6 @@ export default function Create() {
         formData.name,
         symbol,
         formData.prompt,
-        'https://ipfs.io/ipfs/', // Temporary base URI
         parseInt(formData.supply),
         mintPrice
       );

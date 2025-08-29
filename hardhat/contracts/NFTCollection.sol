@@ -4,13 +4,11 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/Address.sol";
 
 contract NFTCollection is ERC721URIStorage, ReentrancyGuard, Ownable {
     uint256 private _tokenIds;
     uint256 public maxSupply;
     uint256 public mintPrice;
-    string private _baseTokenURI;
     string public prompt;
     address public creator;
     address public factory;
@@ -35,7 +33,6 @@ contract NFTCollection is ERC721URIStorage, ReentrancyGuard, Ownable {
         string memory name,
         string memory symbol,
         string memory _prompt,
-        string memory baseTokenURI,
         uint256 _maxSupply,
         uint256 _mintPrice,
         address _creator,
@@ -49,7 +46,6 @@ contract NFTCollection is ERC721URIStorage, ReentrancyGuard, Ownable {
         );
         require(_payees.length > 0, "Must have at least one payee");
 
-        _baseTokenURI = baseTokenURI;
         prompt = _prompt;
         maxSupply = _maxSupply;
         mintPrice = _mintPrice;
@@ -86,7 +82,7 @@ contract NFTCollection is ERC721URIStorage, ReentrancyGuard, Ownable {
         // Distribute payments immediately
         for (uint256 i = 0; i < payees.length; i++) {
             uint256 payment = (msg.value * shares[i]) / totalShares;
-            Address.sendValue(payees[i], payment);
+            payable(payees[i]).transfer(payment);
             emit PaymentDistributed(payees[i], payment);
         }
 
@@ -112,8 +108,6 @@ contract NFTCollection is ERC721URIStorage, ReentrancyGuard, Ownable {
         emit TokenURIUpdated(tokenId, newTokenURI);
     }
 
-
-
     function getTokenPrompt(
         uint256 tokenId
     ) external view returns (string memory) {
@@ -134,15 +128,7 @@ contract NFTCollection is ERC721URIStorage, ReentrancyGuard, Ownable {
         return _tokenIds;
     }
 
-
-
-    function _baseURI() internal view override returns (string memory) {
-        return _baseTokenURI;
+    function _baseURI() internal pure override returns (string memory) {
+        return "ipfs://";
     }
-
-    function setBaseURI(string memory newBaseURI) external onlyCreatorOrOwner {
-        _baseTokenURI = newBaseURI;
-    }
-
-
 }

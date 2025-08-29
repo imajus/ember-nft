@@ -57,13 +57,10 @@ export class BlockchainEventListener {
 
   async listenToFactoryEvents() {
     const factoryContract = await getNFTFactory(this.provider);
-    factoryContract.on(
-      'CollectionCreated',
-      (collectionAddress, creator, name, symbol) => {
-        console.log(`New collection created: ${collectionAddress}`);
-        this.addCollectionContract(collectionAddress);
-      }
-    );
+    factoryContract.on('CollectionCreated', (id, collectionAddress) => {
+      console.log(`New collection created: ${collectionAddress}`);
+      this.addCollectionContract(collectionAddress);
+    });
     const factoryAddress = await factoryContract.getAddress();
     console.log(`Listening to factory events at: ${factoryAddress}`);
     return factoryContract;

@@ -6,11 +6,20 @@
   "configurations": [
     {
       "type": "node",
+      "name": "Generator",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/generator",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run-script", "dev"],
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "type": "node",
       "name": "Frontend",
       "request": "launch",
-      "runtimeArgs": ["run-script", "dev"],
-      "runtimeExecutable": "npm",
       "cwd": "${workspaceFolder}/frontend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run-script", "dev"],
       "skipFiles": ["<node_internals>/**"]
     },
     {
