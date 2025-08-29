@@ -54,23 +54,6 @@
   {
     "type": "event",
     "anonymous": false,
-    "name": "CollectionStatusUpdated",
-    "inputs": [
-      {
-        "type": "uint256",
-        "name": "collectionId",
-        "indexed": true
-      },
-      {
-        "type": "bool",
-        "name": "isActive",
-        "indexed": false
-      }
-    ]
-  },
-  {
-    "type": "event",
-    "anonymous": false,
     "name": "OwnershipTransferred",
     "inputs": [
       {
@@ -145,10 +128,6 @@
       {
         "type": "uint256",
         "name": "createdAt"
-      },
-      {
-        "type": "bool",
-        "name": "isActive"
       }
     ]
   },
@@ -272,10 +251,6 @@
           {
             "type": "uint256",
             "name": "createdAt"
-          },
-          {
-            "type": "bool",
-            "name": "isActive"
           }
         ]
       }
@@ -361,17 +336,21 @@
   },
   {
     "type": "function",
-    "name": "updateCollectionStatus",
+    "name": "updateTokenURI",
     "constant": false,
     "payable": false,
     "inputs": [
       {
-        "type": "uint256",
-        "name": "collectionId"
+        "type": "address",
+        "name": "collectionAddress"
       },
       {
-        "type": "bool",
-        "name": "isActive"
+        "type": "uint256",
+        "name": "tokenId"
+      },
+      {
+        "type": "string",
+        "name": "newTokenURI"
       }
     ],
     "outputs": []

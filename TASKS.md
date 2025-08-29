@@ -2,17 +2,15 @@
 
 ## Progress Overview
 
-### Phase 1: Core Infrastructure - 16% Complete (8/50 tasks)
+### Phase 1: Core Infrastructure - 38% Complete (19/50 tasks)
 
 **Completed:**
 
 - ✅ Smart contract architecture and deployment (8/10 tasks)
+- ✅ Generator service (11/11 tasks)
 
 **In Progress:**
 
-- 🔄 Backend services (0/9 tasks)
-- 🔄 AI integration (0/8 tasks)
-- 🔄 Storage integration (0/7 tasks)
 - 🔄 Frontend core pages (0/14 tasks)
 
 **Last Updated:** August 29, 2025
@@ -34,53 +32,35 @@
 
 ### Frontend - Core Pages
 
-- [ ] Clean up existing React/Vite project from unrelated pages/components/styles
-- [ ] Create landing page with platform overview
-- [ ] Build collection browse/explore page
-- [ ] Implement collection creation wizard
-  - [ ] Prompt input interface
-  - [ ] Reference image upload
-  - [ ] Supply and pricing configuration
-  - [ ] Metadata management
-- [ ] Create individual collection view page
-- [ ] Build minting interface with cost breakdown
-- [ ] Add wallet connection flow (Reown)
-- [ ] Implement transaction status tracking
-- [ ] Create user dashboard for creators
-- [ ] Add collection management interface
+- [x] Clean up existing React/Vite project from unrelated pages/components/styles
+- [x] Create landing page with platform overview
+- [x] Build collection browse/explore page
+- [x] Implement collection creation wizard
+  - [x] Prompt input interface
+  - [x] Reference image upload
+  - [x] Supply and pricing configuration
+  - [x] Metadata management
+- [x] Create individual collection view page
+- [-] Build minting interface with cost breakdown
+- [x] Add wallet connection flow (Reown)
+- [-] Implement transaction status tracking
+- [x] Create user dashboard for creators
+- [-] Add collection management interface
 
-### Backend Services
+### Generator Service
 
-- [ ] Set up Node.js/Express API server
-- [ ] Implement blockchain event listener service
-- [ ] Create mint event detection and parsing
-- [ ] Build queue system for generation requests
-- [ ] Implement retry logic for failed generations
-- [ ] Create metadata generation service
-- [ ] Set up database for tracking generation status
-- [ ] Add API endpoints for frontend communication
-- [ ] Implement webhook system for status updates
-
-### AI Integration
-
-- [ ] Research and select AI image generation API (DALL-E, Stable Diffusion, Midjourney)
-- [ ] Create AI service wrapper with error handling
-- [ ] Implement prompt templating and validation
-- [ ] Add reference image integration logic
-- [ ] Build generation request queue
-- [ ] Implement rate limiting and cost management
-- [ ] Create fallback mechanisms for API failures
-- [ ] Add image quality validation
-
-### Storage Integration
-
-- [ ] Set up IPFS node or use service (Pinata, Infura)
-- [ ] Create image upload service
-- [ ] Implement metadata JSON generation
-- [ ] Build IPFS upload with retry logic
-- [ ] Add content verification system
-- [ ] Create backup storage strategy
-- [ ] Implement CDN integration for fast delivery
+- [x] Set Node.js project in `generator` folder
+- [x] Create a symlink to `hardhat/abi` folder
+- [x] Integrate `dotenv` library and support `DEPLOYER_PRIVATE_KEY` environment variable
+- [x] Implement Somnia Testnet blockchain event listener
+- [x] Create mint event detection and parsing
+- [x] Create image upload service using IPFS (Pinata)
+- [x] Integrate OpenAI SDK for image generation (DALL-E)
+  - [x] Add reference image integration logic
+  - [x] Implement rate limiting and cost management
+- [x] Build IPFS image & metadata upload
+- [x] Implement updating NFT metadata using `updateTokenURI()` function from `NFTCollection` smart contract
+- [x] Create `generator/README.md` file
 
 ## Phase 2: User Experience
 

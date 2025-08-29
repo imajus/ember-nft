@@ -24,7 +24,6 @@ contract NFTCollectionFactory is Ownable, ReentrancyGuard {
         uint256 maxSupply;
         uint256 mintPrice;
         uint256 createdAt;
-        bool isActive;
     }
 
     mapping(uint256 => CollectionInfo) public collectionInfo;
@@ -34,8 +33,6 @@ contract NFTCollectionFactory is Ownable, ReentrancyGuard {
         address indexed contractAddress,
         address indexed creator
     );
-
-    event CollectionStatusUpdated(uint256 indexed collectionId, bool isActive);
 
     constructor() Ownable(msg.sender) {}
 
@@ -91,8 +88,7 @@ contract NFTCollectionFactory is Ownable, ReentrancyGuard {
             prompt: prompt,
             maxSupply: maxSupply,
             mintPrice: mintPrice,
-            createdAt: block.timestamp,
-            isActive: true
+            createdAt: block.timestamp
         });
 
         emit CollectionCreated(newCollectionId, collectionAddress, msg.sender);
@@ -100,23 +96,7 @@ contract NFTCollectionFactory is Ownable, ReentrancyGuard {
         return newCollectionId;
     }
 
-    function updateCollectionStatus(
-        uint256 collectionId,
-        bool isActive
-    ) external {
-        CollectionInfo storage info = collectionInfo[collectionId];
-        require(
-            info.creator == msg.sender || msg.sender == owner(),
-            "Not authorized"
-        );
-        require(
-            info.contractAddress != address(0),
-            "Collection does not exist"
-        );
 
-        info.isActive = isActive;
-        emit CollectionStatusUpdated(collectionId, isActive);
-    }
 
     function getCollectionsByCreator(
         address creator
@@ -140,5 +120,16 @@ contract NFTCollectionFactory is Ownable, ReentrancyGuard {
 
     function getTotalCollections() external view returns (uint256) {
         return _collectionIds;
+    }
+
+    function updateTokenURI(
+        address collectionAddress,
+        uint256 tokenId,
+        string memory newTokenURI
+    ) external onlyOwner {
+        require(collectionAddress != address(0), "Invalid collection address");
+        
+        NFTCollection collection = NFTCollection(collectionAddress);
+        collection.updateTokenURI(tokenId, newTokenURI);
     }
 }

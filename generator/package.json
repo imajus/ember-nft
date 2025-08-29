@@ -1,0 +1,21 @@
+{
+  "name": "ember-generator",
+  "version": "0.1.0",
+  "description": "AI-powered NFT image generation service for Ember",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "ethers": "^6.8.1",
+    "openai": "^4.20.1",
+    "pinata-web3": "^0.4.0"
+  },
+  "devDependencies": {
+    "vitest": "^0.34.6"
+  }
+}

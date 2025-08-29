@@ -24,10 +24,7 @@ export default function Explore() {
 
       const formattedCollections = collectionsData
         .map((collection) => {
-          if (
-            collection.contractAddress === ethers.ZeroAddress ||
-            !collection.isActive
-          ) {
+          if (collection.contractAddress === ethers.ZeroAddress) {
             return null;
           }
 
@@ -41,7 +38,6 @@ export default function Explore() {
             creator: collection.creator,
             prompt: collection.prompt,
             createdAt: collection.createdAt.toString(),
-            isActive: collection.isActive,
             image:
               'https://via.placeholder.com/400x400?text=' +
               encodeURIComponent(collection.name),
@@ -72,13 +68,10 @@ export default function Explore() {
 
       const mintPrice = ethers.parseEther(collection.mintPrice);
 
-      // Create a unique prompt variation for this mint
-      const promptVariation = `${collection.prompt}, unique artwork`;
-
-      console.log('Minting NFT with prompt:', promptVariation);
+      console.log('Minting NFT with collection prompt:', collection.prompt);
       console.log('Mint price:', collection.mintPrice, 'ETH');
 
-      const transaction = await collectionContract.mint(promptVariation, {
+      const transaction = await collectionContract.mint({
         value: mintPrice,
       });
 
@@ -176,11 +169,10 @@ export default function Explore() {
                     </p>
                   </div>
                   <button
-                    className="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:shadow-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:shadow-lg transition-all duration-200 transform hover:scale-105"
                     onClick={() => mintNft(collection)}
-                    disabled={!collection.isActive}
                   >
-                    {!collection.isActive ? 'Inactive' : 'Mint'}
+                    Mint
                   </button>
                 </div>
               </div>

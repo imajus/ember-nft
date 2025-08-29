@@ -76,7 +76,7 @@ hardhat/
 ### NFTCollectionFactory.sol
 
 - **Collection Deployment**: Factory contract for creating new NFT collections
-- **Payment Splitting**: Automatic distribution of mint proceeds to creators and platform
+- **Payment Distribution**: Immediate distribution of mint proceeds to creators and platform
 - **Access Control**: Creator verification and collection management
 - **Collection Registry**: Track all deployed collections and their metadata
 - **Events**: Emit events for backend integration and tracking
@@ -85,17 +85,17 @@ hardhat/
 
 - **AI-Prompted Minting**: Mint NFTs with text prompts for AI generation
 - **Deferred Metadata**: Support for post-mint URI updates after AI generation
-- **Payment Distribution**: Multi-party payment splitting on each mint
+- **Payment Distribution**: Immediate multi-party payment distribution on each mint
 - **Minting Controls**: Enable/disable minting, set time windows
 - **Generation Tracking**: Track which tokens have completed AI generation
 - **Events**: Comprehensive event emission for backend processing
 
 ### SimplePaymentSplitter.sol
 
+- **Utility Contract**: General-purpose payment splitting utility (not used by NFTCollection)
 - **Revenue Sharing**: Distribute payments among multiple recipients
 - **Proportional Splits**: Share distribution based on configured percentages
 - **Release Management**: Allow recipients to claim their share of payments
-- **Gas Efficient**: Optimized for minimal gas usage during distributions
 
 ## Network Configuration
 
@@ -129,9 +129,8 @@ The contracts are compiled with optimization enabled:
 
 1. **Collection Creation**: Creator deploys collection via factory with AI prompt template
 2. **Minting**: Users mint NFTs by providing specific prompts
-3. **Generation Request**: Contract emits `GenerationRequested` event with prompt
-4. **Backend Processing**: Event listener picks up requests and queues AI generation
-5. **Metadata Update**: Generated image is uploaded to IPFS, metadata updated via `updateTokenURI`
+3. **Backend Processing**: Event listener picks up `TokenMinted` events and queues AI generation
+4. **Metadata Update**: Generated image is uploaded to IPFS, factory calls `updateTokenURI` on collection
 6. **Completion**: Token marked as generated, ready for display and trading
 
 ## Event Monitoring
@@ -139,7 +138,6 @@ The contracts are compiled with optimization enabled:
 Key events to monitor for backend integration:
 
 - `CollectionCreated`: New collection deployed
-- `TokenMinted`: New NFT minted with prompt
-- `GenerationRequested`: AI generation needed for token
+- `TokenMinted`: New NFT minted with prompt (triggers AI generation)
 - `TokenURIUpdated`: Metadata updated after generation
-- `PaymentReceived`: Funds received for payment splitting
+- `PaymentDistributed`: Payment sent to recipient during minting

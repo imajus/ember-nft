@@ -245,45 +245,11 @@
   {
     "type": "event",
     "anonymous": false,
-    "name": "GenerationRequested",
-    "inputs": [
-      {
-        "type": "uint256",
-        "name": "tokenId",
-        "indexed": true
-      },
-      {
-        "type": "string",
-        "name": "prompt",
-        "indexed": false
-      },
-      {
-        "type": "address",
-        "name": "requester",
-        "indexed": false
-      }
-    ]
-  },
-  {
-    "type": "event",
-    "anonymous": false,
     "name": "MetadataUpdate",
     "inputs": [
       {
         "type": "uint256",
         "name": "_tokenId",
-        "indexed": false
-      }
-    ]
-  },
-  {
-    "type": "event",
-    "anonymous": false,
-    "name": "MintingStatusUpdated",
-    "inputs": [
-      {
-        "type": "bool",
-        "name": "enabled",
         "indexed": false
       }
     ]
@@ -308,29 +274,12 @@
   {
     "type": "event",
     "anonymous": false,
-    "name": "PaymentReceived",
+    "name": "PaymentDistributed",
     "inputs": [
       {
         "type": "address",
-        "name": "from",
-        "indexed": false
-      },
-      {
-        "type": "uint256",
-        "name": "amount",
-        "indexed": false
-      }
-    ]
-  },
-  {
-    "type": "event",
-    "anonymous": false,
-    "name": "PaymentReleased",
-    "inputs": [
-      {
-        "type": "address",
-        "name": "to",
-        "indexed": false
+        "name": "recipient",
+        "indexed": true
       },
       {
         "type": "uint256",
@@ -353,11 +302,6 @@
         "type": "address",
         "name": "minter",
         "indexed": true
-      },
-      {
-        "type": "string",
-        "name": "prompt",
-        "indexed": false
       },
       {
         "type": "uint256",
@@ -587,12 +531,7 @@
     "constant": false,
     "stateMutability": "payable",
     "payable": true,
-    "inputs": [
-      {
-        "type": "string",
-        "name": "prompt"
-      }
-    ],
+    "inputs": [],
     "outputs": []
   },
   {
@@ -631,19 +570,6 @@
     "outputs": [
       {
         "type": "uint256"
-      }
-    ]
-  },
-  {
-    "type": "function",
-    "name": "mintingEnabled",
-    "constant": true,
-    "stateMutability": "view",
-    "payable": false,
-    "inputs": [],
-    "outputs": [
-      {
-        "type": "bool"
       }
     ]
   },
@@ -718,54 +644,6 @@
     "outputs": [
       {
         "type": "string"
-      }
-    ]
-  },
-  {
-    "type": "function",
-    "name": "releasable",
-    "constant": true,
-    "stateMutability": "view",
-    "payable": false,
-    "inputs": [
-      {
-        "type": "address",
-        "name": "account"
-      }
-    ],
-    "outputs": [
-      {
-        "type": "uint256"
-      }
-    ]
-  },
-  {
-    "type": "function",
-    "name": "release",
-    "constant": false,
-    "payable": false,
-    "inputs": [
-      {
-        "type": "address",
-        "name": "account"
-      }
-    ],
-    "outputs": []
-  },
-  {
-    "type": "function",
-    "name": "released",
-    "constant": true,
-    "stateMutability": "view",
-    "payable": false,
-    "inputs": [
-      {
-        "type": "address"
-      }
-    ],
-    "outputs": [
-      {
-        "type": "uint256"
       }
     ]
   },
@@ -855,19 +733,6 @@
   },
   {
     "type": "function",
-    "name": "setMintingEnabled",
-    "constant": false,
-    "payable": false,
-    "inputs": [
-      {
-        "type": "bool",
-        "name": "enabled"
-      }
-    ],
-    "outputs": []
-  },
-  {
-    "type": "function",
     "name": "shares",
     "constant": true,
     "stateMutability": "view",
@@ -929,19 +794,6 @@
     "outputs": [
       {
         "type": "string"
-      }
-    ]
-  },
-  {
-    "type": "function",
-    "name": "totalReleased",
-    "constant": true,
-    "stateMutability": "view",
-    "payable": false,
-    "inputs": [],
-    "outputs": [
-      {
-        "type": "uint256"
       }
     ]
   },
