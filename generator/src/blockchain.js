@@ -4,7 +4,7 @@ import { getNFTFactory, getNFTCollection } from './contracts.js';
 
 export class BlockchainEventListener {
   constructor() {
-    this.provider = new ethers.JsonRpcProvider(config.SOMNIA_RPC_URL);
+    this.provider = new ethers.WebSocketProvider(config.SOMNIA_RPC_URL);
     this.wallet = new ethers.Wallet(config.DEPLOYER_PRIVATE_KEY, this.provider);
     this.contracts = new Map();
   }
@@ -12,46 +12,26 @@ export class BlockchainEventListener {
   async addCollectionContract(address) {
     const contract = await getNFTCollection(address, this.provider);
     this.contracts.set(address, contract);
-
     try {
-      const lastBlock = await this.provider.getBlockNumber();
+      // Get current supply and process all existing tokens
+      const currentSupply = await contract.getCurrentSupply();
       console.log(
-        `Current block: ${lastBlock}, querying from block: ${Math.max(
-          0,
-          lastBlock - 999
-        )}`
+        `Found ${currentSupply} existing tokens in collection ${address}`
       );
-      // Query for TokenMinted events - try different approaches
-      const pastEvents = await contract.queryFilter(
-        'TokenMinted',
-        Math.max(0, lastBlock - 999),
-        lastBlock
-      );
-      console.log(
-        `Found ${pastEvents.length} TokenMinted events for ${address}`
-      );
-      for (const event of pastEvents) {
-        console.log(`Past TokenMinted event:`, {
-          tokenId: event.args[0].toString(),
-          minter: event.args[1],
-          timestamp: event.args[2].toString(),
-          blockNumber: event.blockNumber,
-          transactionHash: event.transactionHash,
-        });
-        // Process past events that haven't been generated yet
-        await this.handleTokenMinted(
-          address,
-          event.args[0],
-          event.args[1],
-          event.args[2]
-        );
+      // Process each existing token (those not generated will be handled)
+      for (
+        let tokenId = 1;
+        tokenId <= parseInt(currentSupply.toString());
+        tokenId++
+      ) {
+        console.log(`Processing existing token ${tokenId}`);
+        await this.handleTokenMinted(address, tokenId);
       }
     } catch (error) {
-      console.error(`Error querying past events for ${address}:`, error);
+      console.error(`Error processing existing tokens for ${address}:`, error);
     }
-
     // Set up listener for future events
-    contract.on('TokenMinted', (tokenId, minter, timestamp, event) => {
+    contract.on('TokenMinted', async (tokenId, minter, timestamp, event) => {
       console.log(`New TokenMinted event detected:`, {
         tokenId: tokenId.toString(),
         minter,
@@ -59,20 +39,19 @@ export class BlockchainEventListener {
         blockNumber: event.blockNumber,
         transactionHash: event.transactionHash,
       });
-      this.handleTokenMinted(address, tokenId, minter, timestamp);
+      await this.handleTokenMinted(address, tokenId);
     });
-
     console.log(`Added event listener for collection: ${address}`);
   }
 
-  async handleTokenMinted(collectionAddress, tokenId, minter, timestamp) {
+  async handleTokenMinted(collectionAddress, tokenId) {
     const contract = this.contracts.get(collectionAddress);
     const isGenerated = await contract.isTokenGenerated(tokenId);
     if (isGenerated) {
+      console.log(`Token already generated: ${tokenId}`);
       return;
     }
     console.log(`Token minted: ${tokenId} in collection ${collectionAddress}`);
-    console.log(`Minter: ${minter}, Timestamp: ${timestamp}`);
     try {
       // Fetch the collection's prompt since it's not in the event anymore
       const contract = this.contracts.get(collectionAddress);

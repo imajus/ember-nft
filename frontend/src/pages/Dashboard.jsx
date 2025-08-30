@@ -13,6 +13,7 @@ export default function Dashboard() {
     totalCollections: 0,
     totalRevenue: 0,
     totalMinted: 0,
+    totalSupply: 0,
   });
 
   const { open } = useAppKit();
@@ -227,9 +228,12 @@ export default function Dashboard() {
                     </div>
                   </div>
                   <div className="flex space-x-2">
-                    <button className="px-4 py-2 text-purple-600 border border-purple-600 rounded-lg hover:bg-purple-50 transition-colors">
+                    <a
+                      href={`/collection/${collection.id}`}
+                      className="px-4 py-2 text-purple-600 border border-purple-600 rounded-lg hover:bg-purple-50 transition-colors"
+                    >
                       View
-                    </button>
+                    </a>
                   </div>
                 </div>
 

@@ -11,11 +11,11 @@ export class NFTGenerator {
 
   async initialize() {
     console.log('Initializing NFT Generator Service...');
+    this.blockchainListener.processTokenGeneration =
+      this.processTokenGeneration.bind(this);
     await this.blockchainListener.listenToFactoryEvents();
     const existingCollections =
       await this.blockchainListener.loadExistingCollections();
-    this.blockchainListener.processTokenGeneration =
-      this.processTokenGeneration.bind(this);
     console.log('NFT Generator Service initialized successfully');
     return existingCollections;
   }
@@ -26,10 +26,8 @@ export class NFTGenerator {
         `Starting generation for token ${tokenId} in collection ${collectionAddress}`
       );
       console.log(`Prompt: ${prompt}`);
-
       const generatedImage = await this.aiGenerator.generateWithRetry(prompt);
       const imageName = `nft-${collectionAddress}-${tokenId}.png`;
-
       const metadata = {
         name: `Token #${tokenId}`,
         description: `Generated NFT from collection ${collectionAddress}`,
@@ -50,19 +48,16 @@ export class NFTGenerator {
           },
         ],
       };
-
       const upload = await this.ipfsService.uploadImageAndMetadata(
         generatedImage.buffer,
         metadata,
         imageName
       );
-
       await this.blockchainListener.updateTokenURI(
         collectionAddress,
         tokenId,
         upload.metadata.hash
       );
-
       console.log(
         `✅ Successfully generated and uploaded NFT for token ${tokenId}`
       );

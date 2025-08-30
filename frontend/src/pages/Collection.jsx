@@ -2,112 +2,126 @@ import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useAppKit, useAppKitAccount } from '@reown/appkit/react';
-import { getNFTCollection } from '../lib/contracts';
+import { getNFTCollection, getNFTCollectionFactory } from '../lib/contracts';
 import { useProvider } from '../hooks/useProvider';
-import {
-  fetchTokenMetadata,
-  getImageFromMetadata,
-  convertIpfsToHttp,
-} from '../lib/ipfs';
+import TokensList from '../components/TokensList';
 
 export default function Collection() {
-  const { contractAddress } = useParams();
+  const { collectionId } = useParams();
   const [collection, setCollection] = useState(null);
-  const [tokens, setTokens] = useState([]);
   const [loadingState, setLoadingState] = useState('not-loaded');
+  const [collectionContract, setCollectionContract] = useState(null);
   const { open } = useAppKit();
   const { isConnected } = useAppKitAccount();
   const { getProvider, getSigner, isAvailable } = useProvider();
 
   useEffect(() => {
-    if (contractAddress && isAvailable) {
+    if (collectionId && isAvailable) {
       loadCollectionData();
     }
-  }, [contractAddress, isAvailable]);
+  }, [collectionId, isAvailable]);
+
+  // Setup contract
+  useEffect(() => {
+    if (collection && isAvailable) {
+      initializeContract();
+    }
+  }, [collection, isAvailable]);
+
+  // Setup event listeners after collection data is loaded
+  useEffect(() => {
+    if (collection && isAvailable && collectionContract) {
+      setupEventListeners();
+      return () => {
+        cleanupEventListeners();
+      };
+    }
+  }, [collection, isAvailable, collectionContract]);
 
   async function loadCollectionData() {
     try {
       const provider = getProvider();
+      // Get collection info from factory (much more efficient)
+      const factoryContract = await getNFTCollectionFactory(provider);
+      const collectionInfo = await factoryContract.collectionInfo(collectionId);
+      // Get current supply from the collection contract (only call needed)
       const collectionContract = await getNFTCollection(
-        contractAddress,
+        collectionInfo.contractAddress,
         provider
       );
-
-      const [
-        name,
-        symbol,
-        maxSupply,
-        currentSupply,
-        mintPrice,
-        creator,
-        prompt,
-      ] = await Promise.all([
-        collectionContract.name(),
-        collectionContract.symbol(),
-        collectionContract.maxSupply(),
-        collectionContract.getCurrentSupply(),
-        collectionContract.mintPrice(),
-        collectionContract.creator(),
-        collectionContract.getPrompt(),
-      ]);
-
+      const currentSupply = await collectionContract.getCurrentSupply();
       const collectionData = {
-        contractAddress,
-        name,
-        symbol,
-        maxSupply: maxSupply.toString(),
+        id: collectionId,
+        contractAddress: collectionInfo.contractAddress,
+        name: collectionInfo.name,
+        symbol: collectionInfo.symbol,
+        maxSupply: collectionInfo.maxSupply.toString(),
         currentSupply: currentSupply.toString(),
-        mintPrice: ethers.formatEther(mintPrice),
-        creator,
-        prompt,
-        image: 'https://placehold.co/400x400?text=' + encodeURIComponent(name),
+        mintPrice: ethers.formatEther(collectionInfo.mintPrice),
+        creator: collectionInfo.creator,
+        prompt: collectionInfo.prompt,
+        image:
+          'https://placehold.co/400x400?text=' +
+          encodeURIComponent(collectionInfo.name),
       };
-
-      const tokenList = [];
-      for (let i = 1; i <= parseInt(currentSupply.toString()); i++) {
-        try {
-          const owner = await collectionContract.ownerOf(i);
-          const tokenURI = await collectionContract.tokenURI(i);
-          const isGenerated = await collectionContract.isTokenGenerated(i);
-
-          let imageUrl = 'https://placehold.co/300x300?text=Crafting';
-          let tokenName = `Token #${i}`;
-
-          if (isGenerated && tokenURI) {
-            try {
-              const metadata = await fetchTokenMetadata(tokenURI);
-              if (metadata) {
-                imageUrl = getImageFromMetadata(metadata);
-                tokenName = metadata.name;
-              }
-            } catch (metadataError) {
-              console.error(
-                `Error fetching metadata for token ${i}:`,
-                metadataError
-              );
-              imageUrl = convertIpfsToHttp(tokenURI);
-            }
-          }
-
-          tokenList.push({
-            tokenId: i,
-            owner,
-            tokenURI,
-            isGenerated,
-            image: imageUrl,
-            name: tokenName,
-          });
-        } catch (error) {
-          console.error(`Error loading token ${i}:`, error);
-        }
-      }
-
       setCollection(collectionData);
-      setTokens(tokenList);
       setLoadingState('loaded');
     } catch (error) {
       console.error('Error loading collection data:', error);
       setLoadingState('error');
+    }
+  }
+
+  async function initializeContract() {
+    try {
+      const provider = getProvider();
+      const contract = await getNFTCollection(
+        collection.contractAddress,
+        provider
+      );
+      setCollectionContract(contract);
+    } catch (error) {
+      console.error('Error initializing contract for collection:', error);
+    }
+  }
+
+  function setupEventListeners() {
+    try {
+      // Listen for TokenMinted events to update supply count
+      collectionContract.on(
+        'TokenMinted',
+        (tokenId, minter, timestamp, event) => {
+          console.log(`TokenMinted event detected for collection:`, {
+            tokenId: tokenId.toString(),
+            minter,
+            timestamp: timestamp.toString(),
+            blockNumber: event.blockNumber,
+            transactionHash: event.transactionHash,
+          });
+          // Update collection supply count when token is actually minted
+          setCollection((prev) => ({
+            ...prev,
+            currentSupply: (parseInt(prev.currentSupply) + 1).toString(),
+          }));
+        }
+      );
+      console.log(
+        `Collection event listeners set up for: ${collection.contractAddress}`
+      );
+    } catch (error) {
+      console.error('Error setting up collection event listeners:', error);
+    }
+  }
+
+  function cleanupEventListeners() {
+    try {
+      // Use the same contract instance to remove listeners
+      collectionContract.removeAllListeners();
+      console.log(
+        `Collection event listeners cleaned up for: ${collection?.contractAddress}`
+      );
+    } catch (error) {
+      console.error('Error cleaning up collection event listeners:', error);
     }
   }
 
@@ -117,7 +131,6 @@ export default function Collection() {
       return;
     }
     if (!collection) return;
-
     try {
       const signer = await getSigner();
       const collectionContract = await getNFTCollection(
@@ -129,8 +142,7 @@ export default function Collection() {
         value: mintPrice,
       });
       await transaction.wait();
-      // Reload collection data to update supply and show new token
-      loadCollectionData();
+      // Don't update supply count here - let the TokenMinted event handle it
     } catch (error) {
       console.error('Error minting NFT:', error);
       alert('Error minting NFT: ' + (error.reason || error.message));
@@ -240,61 +252,7 @@ export default function Collection() {
         </div>
       </div>
 
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-800 mb-6">
-          Minted Tokens ({tokens.length})
-        </h2>
-
-        {tokens.length === 0 ? (
-          <div className="text-center py-16 bg-white rounded-xl shadow-lg">
-            <p className="text-gray-600 text-lg">
-              No tokens have been minted yet.
-            </p>
-            <p className="text-gray-500 mt-2">
-              Be the first to mint from this collection!
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {tokens.map((token) => (
-              <div
-                key={token.tokenId}
-                className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-200"
-              >
-                <div className="aspect-square overflow-hidden">
-                  <img
-                    src={token.image}
-                    alt={`Token ${token.tokenId}`}
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
-                  />
-                </div>
-                <div className="p-4">
-                  <h3 className="text-lg font-bold text-gray-800 mb-2">
-                    {token.name}
-                  </h3>
-                  <div className="text-sm text-gray-500 space-y-1">
-                    <p>
-                      Owner: {token.owner.slice(0, 6)}...{token.owner.slice(-4)}
-                    </p>
-                    <p>
-                      Status:
-                      <span
-                        className={`ml-1 px-2 py-1 rounded text-xs ${
-                          token.isGenerated
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-yellow-100 text-yellow-800'
-                        }`}
-                      >
-                        {token.isGenerated ? 'Generated' : 'Pending'}
-                      </span>
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+      <TokensList collection={collection} />
     </div>
   );
 }

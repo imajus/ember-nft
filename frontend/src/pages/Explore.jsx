@@ -129,7 +129,7 @@ export default function Explore() {
                     </p>
                   </div>
                   <a
-                    href={`/collection/${collection.contractAddress}`}
+                    href={`/collection/${collection.id}`}
                     className="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:shadow-lg transition-all duration-200 transform hover:scale-105"
                   >
                     View

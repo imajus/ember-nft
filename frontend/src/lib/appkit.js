@@ -1,11 +1,22 @@
 import { createAppKit } from '@reown/appkit/react';
 import { EthersAdapter } from '@reown/appkit-adapter-ethers';
 import { hardhat, somniaTestnet } from '@reown/appkit/networks';
+import { defaultsDeep } from 'lodash-es';
 
 // 1. Get projectId from environment variables
 const projectId = import.meta.env.VITE_REOWN_PROJECT_ID;
 
-const networks = [hardhat, somniaTestnet];
+const networks = [
+  hardhat,
+  defaultsDeep(somniaTestnet, {
+    rpcUrls: {
+      default: {
+        http: ['https://dream-rpc.somnia.network'],
+        webSocket: ['wss://dream-rpc.somnia.network/ws'],
+      },
+    },
+  }),
+];
 
 // 3. Create a metadata object - optional
 const metadata = {

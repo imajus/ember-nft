@@ -18,7 +18,7 @@ function App() {
           <Route path="/explore" element={<Explore />} />
           <Route path="/create" element={<Create />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/collection/:contractAddress" element={<Collection />} />
+          <Route path="/collection/:collectionId" element={<Collection />} />
         </Routes>
       </div>
     </Router>
