@@ -4,6 +4,7 @@ import Home from './pages/Home'
 import Explore from './pages/Explore'
 import Create from './pages/Create'
 import Dashboard from './pages/Dashboard'
+import Collection from './pages/Collection'
 import './lib/appkit'
 import './styles/globals.css'
 
@@ -17,6 +18,7 @@ function App() {
           <Route path="/explore" element={<Explore />} />
           <Route path="/create" element={<Create />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/collection/:contractAddress" element={<Collection />} />
         </Routes>
       </div>
     </Router>

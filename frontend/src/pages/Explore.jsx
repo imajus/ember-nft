@@ -1,15 +1,12 @@
 import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
-import { useAppKit, useAppKitAccount } from '@reown/appkit/react';
-import { getNFTCollectionFactory, getNFTCollection } from '../lib/contracts';
+import { getNFTCollectionFactory } from '../lib/contracts';
 import { useProvider } from '../hooks/useProvider';
 
 export default function Explore() {
   const [collections, setCollections] = useState([]);
   const [loadingState, setLoadingState] = useState('not-loaded');
-  const { open } = useAppKit();
-  const { isConnected } = useAppKitAccount();
-  const { getProvider, getSigner } = useProvider();
+  const { getProvider } = useProvider();
 
   useEffect(() => {
     loadCollections();
@@ -47,30 +44,6 @@ export default function Explore() {
     } catch (error) {
       console.error('Error loading collections:', error);
       setLoadingState('error');
-    }
-  }
-
-  async function mintNft(collection) {
-    if (!isConnected) {
-      open();
-      return;
-    }
-    try {
-      const signer = await getSigner();
-      const collectionContract = await getNFTCollection(
-        collection.contractAddress,
-        signer
-      );
-      const mintPrice = ethers.parseEther(collection.mintPrice);
-      const transaction = await collectionContract.mint({
-        value: mintPrice,
-      });
-      await transaction.wait();
-      // Reload collections to update supply
-      loadCollections();
-    } catch (error) {
-      console.error('Error minting NFT:', error);
-      alert('Error minting NFT: ' + (error.reason || error.message));
     }
   }
 
@@ -155,12 +128,12 @@ export default function Explore() {
                       {collection.mintPrice} ETH
                     </p>
                   </div>
-                  <button
+                  <a
+                    href={`/collection/${collection.contractAddress}`}
                     className="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:shadow-lg transition-all duration-200 transform hover:scale-105"
-                    onClick={() => mintNft(collection)}
                   >
-                    Mint
-                  </button>
+                    View
+                  </a>
                 </div>
               </div>
             </div>

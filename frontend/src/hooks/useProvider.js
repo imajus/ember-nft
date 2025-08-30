@@ -20,20 +20,10 @@ export function useProvider() {
     return await provider.getSigner();
   };
 
-  // // For read-only operations, we still need a connected wallet to get the network info
-  // const getReadOnlyProvider = () => {
-  //   if (!walletProvider) {
-  //     // Fallback to default RPC for read operations when wallet isn't connected
-  //     return new ethers.JsonRpcProvider('https://dream-rpc.somnia.network/');
-  //   }
-  //   return new ethers.BrowserProvider(walletProvider);
-  // };
-
   return {
     walletProvider,
     getProvider,
     getSigner,
-    // getReadOnlyProvider,
     isAvailable: !!walletProvider,
   };
 }
