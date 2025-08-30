@@ -1,34 +1,20 @@
 import { useEffect, useState } from 'react';
-import { getNFTCollection } from '../lib/contracts';
-import { useProvider } from '../hooks/useProvider';
 import TokenCard from './TokenCard';
 
 export default function TokensList({ collection }) {
   const [tokenIds, setTokenIds] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [collectionContract, setCollectionContract] = useState(null);
-  const { getProvider, isAvailable } = useProvider();
 
   useEffect(() => {
-    if (collection && isAvailable) {
+    if (collection) {
       initializeContract();
     }
-    return () => {
-      // cleanupEventListeners();
-    };
-  }, [collection, isAvailable]);
+  }, [collection]);
 
   async function initializeContract() {
     try {
-      const provider = getProvider();
-      const contract = await getNFTCollection(
-        collection.contractAddress,
-        provider
-      );
-      setCollectionContract(contract);
       // Load token IDs and setup listeners with the same contract instance
       loadTokenIds();
-      // setupEventListeners(contract);
     } catch (error) {
       console.error('Error initializing contract for token list:', error);
     }
@@ -50,42 +36,6 @@ export default function TokensList({ collection }) {
       setIsLoading(false);
     }
   }
-
-  function addNewTokenId(tokenId) {
-    setTokenIds((prevTokenIds) => [
-      ...prevTokenIds,
-      parseInt(tokenId.toString()),
-    ]);
-    console.log(`Added new token ID ${tokenId} to list`);
-  }
-
-  // function setupEventListeners(contract) {
-  //   if (!collection || !isAvailable || !contract) return;
-
-  //   try {
-  //     // Listen for TokenMinted events to add new token IDs
-  //     contract.on('TokenMinted', (tokenId, minter, timestamp, event) => {
-  //       console.log(`New token minted in TokensList: ${tokenId}`);
-  //       addNewTokenId(parseInt(tokenId.toString()));
-  //     });
-
-  //     console.log(`Token event listeners set up for collection: ${collection.contractAddress}`);
-  //   } catch (error) {
-  //     console.error('Error setting up token event listeners:', error);
-  //   }
-  // }
-
-  // function cleanupEventListeners() {
-  //   if (!collectionContract) return;
-
-  //   try {
-  //     // Use the same contract instance to remove listeners
-  //     collectionContract.removeAllListeners('TokenMinted');
-  //     console.log(`Token event listeners cleaned up for collection: ${collection?.contractAddress}`);
-  //   } catch (error) {
-  //     console.error('Error cleaning up token event listeners:', error);
-  //   }
-  // }
 
   return (
     <div className="mb-8">

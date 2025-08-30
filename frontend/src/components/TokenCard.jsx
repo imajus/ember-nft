@@ -13,7 +13,7 @@ export default function TokenCard({ tokenId, collection, onTokenUpdate }) {
     owner: null,
     tokenURI: null,
     isGenerated: false,
-    image: 'https://placehold.co/300x300?text=Loading...',
+    image: '/loading.gif',
     name: `Token #${tokenId}`,
     isLoading: true,
   });
@@ -51,7 +51,7 @@ export default function TokenCard({ tokenId, collection, onTokenUpdate }) {
       const owner = await contract.ownerOf(tokenId);
       const tokenURI = await contract.tokenURI(tokenId);
       const isGenerated = await contract.isTokenGenerated(tokenId);
-      let imageUrl = 'https://placehold.co/300x300?text=Crafting';
+      let imageUrl = token.image;
       let tokenName = `Token #${tokenId}`;
       if (isGenerated && tokenURI) {
         try {
@@ -87,7 +87,7 @@ export default function TokenCard({ tokenId, collection, onTokenUpdate }) {
       setToken((prev) => ({
         ...prev,
         isLoading: false,
-        image: 'https://placehold.co/300x300?text=Error',
+        image: null,
       }));
     }
   }
@@ -96,7 +96,7 @@ export default function TokenCard({ tokenId, collection, onTokenUpdate }) {
     if (!newTokenURI) return;
     const updateToken = async () => {
       try {
-        let imageUrl = 'https://placehold.co/300x300?text=Generated';
+        let imageUrl = token.image;
         let tokenName = null;
         try {
           const metadata = await fetchTokenMetadata(newTokenURI);
@@ -109,6 +109,7 @@ export default function TokenCard({ tokenId, collection, onTokenUpdate }) {
             `Error fetching metadata for token ${tokenId}:`,
             metadataError
           );
+          ('/loading.gif');
           imageUrl = convertIpfsToHttp(newTokenURI);
         }
         const updatedToken = {
@@ -174,9 +175,7 @@ export default function TokenCard({ tokenId, collection, onTokenUpdate }) {
         <img
           src={token.image}
           alt={`Token ${token.tokenId}`}
-          className={`w-full h-full object-cover transition-all duration-200 ${
-            token.isLoading ? 'animate-pulse' : 'hover:scale-105'
-          }`}
+          className="`w-full h-full object-cover transition-all duration-200 hover:scale-105"
         />
         {token.isLoading && (
           <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
