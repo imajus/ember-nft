@@ -12,13 +12,65 @@ export class BlockchainEventListener {
   async addCollectionContract(address) {
     const contract = await getNFTCollection(address, this.provider);
     this.contracts.set(address, contract);
-    contract.on('TokenMinted', (tokenId, minter, timestamp) => {
+
+    try {
+      const lastBlock = await this.provider.getBlockNumber();
+      console.log(
+        `Current block: ${lastBlock}, querying from block: ${Math.max(
+          0,
+          lastBlock - 999
+        )}`
+      );
+      // Query for TokenMinted events - try different approaches
+      const pastEvents = await contract.queryFilter(
+        'TokenMinted',
+        Math.max(0, lastBlock - 999),
+        lastBlock
+      );
+      console.log(
+        `Found ${pastEvents.length} TokenMinted events for ${address}`
+      );
+      for (const event of pastEvents) {
+        console.log(`Past TokenMinted event:`, {
+          tokenId: event.args[0].toString(),
+          minter: event.args[1],
+          timestamp: event.args[2].toString(),
+          blockNumber: event.blockNumber,
+          transactionHash: event.transactionHash,
+        });
+        // Process past events that haven't been generated yet
+        await this.handleTokenMinted(
+          address,
+          event.args[0],
+          event.args[1],
+          event.args[2]
+        );
+      }
+    } catch (error) {
+      console.error(`Error querying past events for ${address}:`, error);
+    }
+
+    // Set up listener for future events
+    contract.on('TokenMinted', (tokenId, minter, timestamp, event) => {
+      console.log(`New TokenMinted event detected:`, {
+        tokenId: tokenId.toString(),
+        minter,
+        timestamp: timestamp.toString(),
+        blockNumber: event.blockNumber,
+        transactionHash: event.transactionHash,
+      });
       this.handleTokenMinted(address, tokenId, minter, timestamp);
     });
+
     console.log(`Added event listener for collection: ${address}`);
   }
 
   async handleTokenMinted(collectionAddress, tokenId, minter, timestamp) {
+    const contract = this.contracts.get(collectionAddress);
+    const isGenerated = await contract.isTokenGenerated(tokenId);
+    if (isGenerated) {
+      return;
+    }
     console.log(`Token minted: ${tokenId} in collection ${collectionAddress}`);
     console.log(`Minter: ${minter}, Timestamp: ${timestamp}`);
     try {
