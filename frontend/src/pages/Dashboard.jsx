@@ -4,6 +4,7 @@ import { useAppKit, useAppKitAccount } from '@reown/appkit/react';
 import { ethers } from 'ethers';
 import { getNFTCollectionFactory, getNFTCollection } from '../lib/contracts';
 import { useProvider } from '../hooks/useProvider';
+import { mint } from '@reown/appkit/networks';
 
 export default function Dashboard() {
   const [collections, setCollections] = useState([]);
@@ -33,58 +34,56 @@ export default function Dashboard() {
       const userCollections = await factory.getCollectionsByCreator(address);
       const collectionPromises = userCollections.map(async (collectionId) => {
         try {
-          const contractAddress = await factory.collections(collectionId);
-          if (contractAddress === ethers.ZeroAddress) {
-            return null;
-          }
+          const result = await factory.collectionInfo(collectionId);
+          const [
+            ,
+            contractAddress,
+            ,
+            name,
+            symbol,
+            prompt,
+            maxSupply,
+            mintPrice,
+          ] = result;
           const collection = await getNFTCollection(contractAddress, provider);
-          const [name, symbol, maxSupply, mintPrice, prompt] =
-            await Promise.all([
-              collection.name(),
-              collection.symbol(),
-              collection.maxSupply(),
-              collection.mintPrice(),
-              collection.prompt(),
-            ]);
-          const mintPriceEth = parseFloat(ethers.formatEther(mintPrice));
-          const minted = parseInt(maxSupply.toString());
-          const revenue = minted * mintPriceEth;
+          const minted = await collection.getCurrentSupply();
+          const revenue = minted * mintPrice;
           return {
             id: collectionId.toString(),
             name,
             symbol,
             description: prompt,
             contractAddress,
-            maxSupply: parseInt(maxSupply.toString()),
+            maxSupply,
             minted,
-            price: mintPriceEth,
+            price: mintPrice,
             revenue,
-            status:
-              minted === parseInt(maxSupply.toString()) ? 'sold-out' : 'active',
+            status: minted === maxSupply ? 'sold-out' : 'active',
             image:
-              'https://via.placeholder.com/300x300?text=' +
-              encodeURIComponent(name),
+              'https://placehold.co/400x400?text=' + encodeURIComponent(name),
           };
         } catch (error) {
           console.error('Error loading collection:', error);
           return null;
         }
       });
-
       const userCollectionData = (await Promise.all(collectionPromises)).filter(
         (c) => c !== null
       );
-
       setCollections(userCollectionData);
       setStats({
         totalCollections: userCollectionData.length,
         totalRevenue: userCollectionData.reduce(
           (sum, col) => sum + col.revenue,
-          0
+          0n
         ),
         totalMinted: userCollectionData.reduce(
           (sum, col) => sum + col.minted,
-          0
+          0n
+        ),
+        totalSupply: userCollectionData.reduce(
+          (sum, col) => sum + col.maxSupply,
+          0n
         ),
       });
       setLoadingState('loaded');
@@ -149,7 +148,7 @@ export default function Dashboard() {
             Total Revenue
           </h3>
           <p className="text-3xl font-bold text-green-600">
-            {stats.totalRevenue.toFixed(2)} ETH
+            {ethers.formatEther(stats.totalRevenue)} ETH
           </p>
         </div>
         <div className="bg-white rounded-xl p-6 shadow-lg">
@@ -157,7 +156,7 @@ export default function Dashboard() {
             Total Minted
           </h3>
           <p className="text-3xl font-bold text-blue-600">
-            {stats.totalMinted}
+            {stats.totalMinted.toString()}/{stats.totalSupply.toString()}
           </p>
         </div>
       </div>
@@ -207,7 +206,8 @@ export default function Dashboard() {
                       </p>
                       <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500">
                         <span>
-                          {collection.minted}/{collection.maxSupply} minted
+                          {collection.minted.toString()}/
+                          {collection.maxSupply.toString()} minted
                         </span>
                         <span>•</span>
                         <span>{collection.price} ETH each</span>
@@ -230,9 +230,6 @@ export default function Dashboard() {
                     <button className="px-4 py-2 text-purple-600 border border-purple-600 rounded-lg hover:bg-purple-50 transition-colors">
                       View
                     </button>
-                    <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
-                      Manage
-                    </button>
                   </div>
                 </div>
 
@@ -242,7 +239,7 @@ export default function Dashboard() {
                     <span>Minting Progress</span>
                     <span>
                       {Math.round(
-                        (collection.minted / collection.maxSupply) * 100
+                        Number(collection.minted / collection.maxSupply) * 100
                       )}
                       %
                     </span>
@@ -252,7 +249,7 @@ export default function Dashboard() {
                       className="bg-gradient-to-r from-purple-600 to-blue-600 h-2 rounded-full transition-all duration-200"
                       style={{
                         width: `${
-                          (collection.minted / collection.maxSupply) * 100
+                          Number(collection.minted / collection.maxSupply) * 100
                         }%`,
                       }}
                     ></div>

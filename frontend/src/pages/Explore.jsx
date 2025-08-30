@@ -20,14 +20,11 @@ export default function Explore() {
       const provider = getProvider();
       const factory = await getNFTCollectionFactory(provider);
       const collectionsData = await factory.getAllCollections();
-      console.log('Total collections:', collectionsData.length);
-
       const formattedCollections = collectionsData
         .map((collection) => {
           if (collection.contractAddress === ethers.ZeroAddress) {
             return null;
           }
-
           return {
             id: collection.id.toString(),
             contractAddress: collection.contractAddress,
@@ -39,7 +36,7 @@ export default function Explore() {
             prompt: collection.prompt,
             createdAt: collection.createdAt.toString(),
             image:
-              'https://via.placeholder.com/400x400?text=' +
+              'https://placehold.co/400x400?text=' +
               encodeURIComponent(collection.name),
           };
         })
@@ -58,27 +55,17 @@ export default function Explore() {
       open();
       return;
     }
-
     try {
       const signer = await getSigner();
       const collectionContract = await getNFTCollection(
         collection.contractAddress,
         signer
       );
-
       const mintPrice = ethers.parseEther(collection.mintPrice);
-
-      console.log('Minting NFT with collection prompt:', collection.prompt);
-      console.log('Mint price:', collection.mintPrice, 'ETH');
-
       const transaction = await collectionContract.mint({
         value: mintPrice,
       });
-
-      console.log('Transaction submitted:', transaction.hash);
       await transaction.wait();
-      console.log('NFT minted successfully!');
-
       // Reload collections to update supply
       loadCollections();
     } catch (error) {
