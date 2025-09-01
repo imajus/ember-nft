@@ -4,6 +4,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useAppKit, useAppKitAccount } from '@reown/appkit/react';
 import { getNFTCollection, getNFTCollectionFactory } from '../lib/contracts';
 import { useProvider } from '../hooks/useProvider';
+import { useCollectionCover } from '../hooks/useCollectionCover';
 import TokensList from '../components/TokensList';
 
 export default function Collection() {
@@ -14,6 +15,9 @@ export default function Collection() {
   const { open } = useAppKit();
   const { isConnected } = useAppKitAccount();
   const { getProvider, getSigner, isAvailable } = useProvider();
+  const { coverImage, isLoading: coverLoading } = useCollectionCover(
+    collection?.contractAddress
+  );
 
   useEffect(() => {
     if (collectionId && isAvailable) {
@@ -60,9 +64,6 @@ export default function Collection() {
         mintPrice: ethers.formatEther(collectionInfo.mintPrice),
         creator: collectionInfo.creator,
         prompt: collectionInfo.prompt,
-        image:
-          'https://placehold.co/400x400?text=' +
-          encodeURIComponent(collectionInfo.name),
       };
       setCollection(collectionData);
       setLoadingState('loaded');
@@ -197,9 +198,11 @@ export default function Collection() {
           <div className="flex flex-col md:flex-row gap-8">
             <div className="w-100 aspect-square overflow-hidden rounded-lg flex-shrink-0">
               <img
-                src={collection.image}
+                src={coverImage}
                 alt={collection.name}
-                className="w-full h-full object-cover"
+                className={`w-full h-full object-cover ${
+                  coverLoading ? 'animate-pulse bg-gray-200' : ''
+                }`}
               />
             </div>
             <div className="min-w-80">
