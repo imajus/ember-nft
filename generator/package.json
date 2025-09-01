@@ -1,7 +1,6 @@
 {
-  "name": "ember-generator",
+  "name": "ember-nft-generator",
   "version": "0.1.0",
-  "description": "AI-powered NFT image generation service for Ember",
   "main": "src/index.js",
   "type": "module",
   "scripts": {

@@ -1,5 +1,6 @@
 {
-  "name": "ember",
+  "name": "ember-nft",
+  "description": "NFT launchpad with AI generated art",
   "version": "0.1.0",
   "private": true,
   "workspaces": [

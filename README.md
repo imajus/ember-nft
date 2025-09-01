@@ -27,7 +27,7 @@ Unlike traditional NFT platforms with pre-generated artwork, our system creates 
 
 ```sh
 git clone <repository-url>
-cd ember
+cd ember-nft
 npm install
 ```
 
@@ -59,7 +59,7 @@ npm run dev
 The project is organized as a monorepo with two main packages:
 
 ```
-ember/
+ember-nft/
 ├── frontend/          # React-based web application
 │   ├── src/          # Application source code
 │   └── README.md     # Frontend documentation
