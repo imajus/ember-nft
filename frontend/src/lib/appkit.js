@@ -3,11 +3,9 @@ import { EthersAdapter } from '@reown/appkit-adapter-ethers';
 import { hardhat, somniaTestnet } from '@reown/appkit/networks';
 import { defaultsDeep } from 'lodash-es';
 
-// 1. Get projectId from environment variables
 const projectId = import.meta.env.VITE_REOWN_PROJECT_ID;
 
 const networks = [
-  hardhat,
   defaultsDeep(somniaTestnet, {
     rpcUrls: {
       default: {
@@ -16,9 +14,9 @@ const networks = [
       },
     },
   }),
+  hardhat,
 ];
 
-// 3. Create a metadata object - optional
 const metadata = {
   name: 'NFT Marketplace',
   description: 'Metaverse NFT Marketplace',
@@ -29,18 +27,25 @@ const metadata = {
   icons: ['https://avatars.githubusercontent.com/u/37784886'],
 };
 
-// 4. Create Ethers Adapter
 const ethersAdapter = new EthersAdapter();
 
-// 5. Create modal
-const modal = createAppKit({
+createAppKit({
   adapters: [ethersAdapter],
   networks,
   projectId,
   metadata,
   features: {
     analytics: false, // Optional - defaults to your Cloud configuration
+    swaps: false,
+    onramp: false,
   },
+  themeMode: 'light',
+  themeVariables: {
+    '--w3m-font-family':
+      'ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
+  },
+  // chainImages: {
+  //   1: "https://my.images.com/eth.png",
+  // },
+  debug: true,
 });
-
-export default modal;
