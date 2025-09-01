@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import HardhatEthers from '@nomicfoundation/hardhat-ethers';
 import HardhatIgnition from '@nomicfoundation/hardhat-ignition-ethers';
 import HardhatABIExporter from '@solidstate/hardhat-abi-exporter';
+import HardhatVerify from '@nomicfoundation/hardhat-verify';
+
 dotenv.config();
 
 export default {
@@ -22,6 +24,7 @@ export default {
     HardhatEthers,
     HardhatIgnition,
     HardhatABIExporter,
+    HardhatVerify,
   ],
   defaultNetwork: 'localhost',
   networks: {
