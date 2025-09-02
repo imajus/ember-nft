@@ -3,6 +3,8 @@ npm-debug.log
 .git
 .gitignore
 README.md
+PRD.md
+TASKS.md
 .env
 .nyc_output
 coverage
