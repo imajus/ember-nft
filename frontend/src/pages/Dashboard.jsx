@@ -17,8 +17,7 @@ export default function Dashboard() {
   });
 
   const { open } = useAppKit();
-  const { isConnected, address } = useAppKitAccount();
-  const { getProvider } = useProvider();
+  const { isConnected, address, getProvider } = useProvider();
 
   useEffect(() => {
     if (isConnected && address) {

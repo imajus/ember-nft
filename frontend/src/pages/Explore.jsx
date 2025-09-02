@@ -7,13 +7,11 @@ import CollectionCard from '../components/CollectionCard';
 export default function Explore() {
   const [collections, setCollections] = useState([]);
   const [loadingState, setLoadingState] = useState('not-loaded');
-  const { getProvider, isAvailable } = useProvider();
+  const { getProvider } = useProvider();
 
   useEffect(() => {
-    if (isAvailable) {
-      loadCollections();
-    }
-  }, [isAvailable]);
+    loadCollections();
+  }, []);
 
   async function loadCollections() {
     try {
@@ -49,20 +47,9 @@ export default function Explore() {
                 `Error loading supply for collection ${collection.contractAddress}:`,
                 error
               );
-              return {
-                id: collection.id.toString(),
-                contractAddress: collection.contractAddress,
-                name: collection.name,
-                symbol: collection.symbol,
-                maxSupply: collection.maxSupply.toString(),
-                currentSupply: '0',
-                mintPrice: ethers.formatEther(collection.mintPrice),
-                creator: collection.creator,
-                prompt: collection.prompt,
-                createdAt: collection.createdAt.toString(),
-              };
             }
           })
+          .filter(Boolean)
       );
       setCollections(formattedCollections);
       setLoadingState('loaded');

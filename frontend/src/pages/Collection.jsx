@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useAppKit, useAppKitAccount } from '@reown/appkit/react';
+import { useAppKit } from '@reown/appkit/react';
 import { getNFTCollection, getNFTCollectionFactory } from '../lib/contracts';
 import { useProvider } from '../hooks/useProvider';
 import { useCollectionCover } from '../hooks/useCollectionCover';
@@ -13,34 +13,33 @@ export default function Collection() {
   const [loadingState, setLoadingState] = useState('not-loaded');
   const [collectionContract, setCollectionContract] = useState(null);
   const { open } = useAppKit();
-  const { isConnected } = useAppKitAccount();
-  const { getProvider, getSigner, isAvailable } = useProvider();
+  const { getProvider, getSigner, isConnected } = useProvider();
   const { coverImage, isLoading: coverLoading } = useCollectionCover(
     collection?.contractAddress
   );
 
   useEffect(() => {
-    if (collectionId && isAvailable) {
+    if (collectionId) {
       loadCollectionData();
     }
-  }, [collectionId, isAvailable]);
+  }, [collectionId]);
 
   // Setup contract
   useEffect(() => {
-    if (collection && isAvailable) {
+    if (collection) {
       initializeContract();
     }
-  }, [collection, isAvailable]);
+  }, [collection]);
 
   // Setup event listeners after collection data is loaded
   useEffect(() => {
-    if (collection && isAvailable && collectionContract) {
+    if (collection && collectionContract) {
       setupEventListeners();
       return () => {
         cleanupEventListeners();
       };
     }
-  }, [collection, isAvailable, collectionContract]);
+  }, [collection, collectionContract]);
 
   async function loadCollectionData() {
     try {
@@ -169,15 +168,11 @@ export default function Collection() {
     );
   }
 
-  if (loadingState === 'not-loaded' || !isAvailable) {
+  if (loadingState === 'not-loaded') {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-600 mx-auto"></div>
-        <p className="mt-4 text-gray-600">
-          {!isAvailable
-            ? 'Initializing Web3 provider...'
-            : 'Loading collection...'}
-        </p>
+        <p className="mt-4 text-gray-600">Loading collection..</p>
       </div>
     );
   }

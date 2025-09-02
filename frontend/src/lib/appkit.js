@@ -14,7 +14,7 @@ const networks = [
       },
     },
   }),
-  hardhat,
+  // hardhat,
 ];
 
 const metadata = {
@@ -47,5 +47,5 @@ createAppKit({
   // chainImages: {
   //   1: "https://my.images.com/eth.png",
   // },
-  debug: true,
+  // debug: true,
 });

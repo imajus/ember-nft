@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAppKit, useAppKitAccount } from '@reown/appkit/react';
+import { useAppKit } from '@reown/appkit/react';
 import { ethers } from 'ethers';
 import { getNFTCollectionFactory } from '../lib/contracts';
 import { useProvider } from '../hooks/useProvider';
@@ -20,8 +20,7 @@ export default function Create() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const { open } = useAppKit();
-  const { isConnected, address } = useAppKitAccount();
-  const { getSigner, isAvailable } = useProvider();
+  const { getSigner, isConnected } = useProvider();
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -51,7 +50,7 @@ export default function Create() {
   };
 
   const handleSubmit = async () => {
-    if (!isConnected || !isAvailable) {
+    if (!isConnected) {
       open();
       return;
     }

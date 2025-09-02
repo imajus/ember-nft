@@ -10,16 +10,16 @@ import { useProvider } from './useProvider';
 const DEFAULT_COVER_IMAGE = 'https://placehold.co/400x400?text=Collection';
 
 export function useCollectionCover(contractAddress) {
-  const { getProvider, isAvailable } = useProvider();
+  const { getProvider } = useProvider();
   const [coverImage, setCoverImage] = useState(DEFAULT_COVER_IMAGE);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (contractAddress && isAvailable) {
+    if (contractAddress) {
       fetchCollectionCover();
     }
-  }, [contractAddress, isAvailable]);
+  }, [contractAddress]);
 
   async function fetchCollectionCover() {
     if (!contractAddress) {

@@ -3,17 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "main": "src/contracts.js",
+  "main": "dist/contracts.js",
   "exports": {
-    ".": "./src/contracts.js",
-    "./contracts": "./src/contracts.js"
+    ".": "./dist/contracts.js",
+    "./contracts": "./dist/contracts.js"
   },
   "scripts": {
+    "build": "node build-contracts.js",
     "chain": "hardhat node",
     "compile": "hardhat compile",
-    "deploy:test": "hardhat ignition deploy ignition/modules/NFTCollectionFactory.js",
-    "deploy:local": "hardhat ignition deploy ignition/modules/NFTCollectionFactory.js --network localhost",
-    "deploy:prod": "hardhat ignition deploy ignition/modules/NFTCollectionFactory.js --network somnia",
+    "deploy:test": "hardhat ignition deploy ignition/modules/NFTCollectionFactory.js && npm run build",
+    "deploy:local": "hardhat ignition deploy ignition/modules/NFTCollectionFactory.js --network localhost && npm run build",
+    "deploy:prod": "hardhat ignition deploy ignition/modules/NFTCollectionFactory.js --network somnia && npm run build",
     "verify:prod": "npx hardhat verify blockscout --network somnia --contract contracts/SmartContract.sol:SmartContract $(jq -r '.\"NFTCollectionFactoryModule#NFTCollectionFactory\"' ./ignition/deployments/chain-50312/deployed_addresses.json)"
   },
   "devDependencies": {

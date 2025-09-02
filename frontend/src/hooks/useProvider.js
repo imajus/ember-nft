@@ -1,4 +1,4 @@
-import { useAppKitProvider } from '@reown/appkit/react';
+import { useAppKitAccount, useAppKitProvider } from '@reown/appkit/react';
 import { ethers } from 'ethers';
 
 /**
@@ -6,24 +6,26 @@ import { ethers } from 'ethers';
  * Returns ethers provider and signer for Web3 interactions
  */
 export function useProvider() {
+  const { address, isConnected } = useAppKitAccount();
   const { walletProvider } = useAppKitProvider('eip155');
 
   const getProvider = () => {
-    if (!walletProvider) {
-      throw new Error('Wallet not connected');
-    }
-    return new ethers.BrowserProvider(walletProvider);
+    return new ethers.WebSocketProvider('wss://dream-rpc.somnia.network/ws');
   };
 
   const getSigner = async () => {
-    const provider = getProvider();
+    if (!walletProvider) {
+      throw new Error('Wallet not connected');
+    }
+    const provider = new ethers.BrowserProvider(walletProvider);
     return await provider.getSigner();
   };
 
   return {
-    walletProvider,
+    address,
+    isConnected,
+    // walletProvider,
     getProvider,
     getSigner,
-    isAvailable: !!walletProvider,
   };
 }

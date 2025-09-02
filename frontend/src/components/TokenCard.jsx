@@ -18,17 +18,17 @@ export default function TokenCard({ tokenId, collection, onTokenUpdate }) {
     isLoading: true,
   });
   const [collectionContract, setCollectionContract] = useState(null);
-  const { getProvider, isAvailable } = useProvider();
+  const { getProvider } = useProvider();
 
   useEffect(() => {
-    if (collection && isAvailable) {
+    if (collection) {
       initializeContract();
       setupEventListeners();
     }
     return () => {
       cleanupEventListeners();
     };
-  }, [collection, isAvailable, tokenId]);
+  }, [collection, tokenId]);
 
   async function initializeContract() {
     try {
@@ -133,7 +133,7 @@ export default function TokenCard({ tokenId, collection, onTokenUpdate }) {
   }
 
   function setupEventListeners() {
-    if (!collection || !isAvailable || !collectionContract) return;
+    if (!collection || !collectionContract) return;
     try {
       // Listen for TokenURIUpdated events for this specific token
       const filter = collectionContract.filters.TokenURIUpdated();
