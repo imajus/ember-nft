@@ -7,18 +7,9 @@ export default function TokensList({ collection }) {
 
   useEffect(() => {
     if (collection) {
-      initializeContract();
+      loadTokenIds();
     }
   }, [collection]);
-
-  async function initializeContract() {
-    try {
-      // Load token IDs and setup listeners with the same contract instance
-      loadTokenIds();
-    } catch (error) {
-      console.error('Error initializing contract for token list:', error);
-    }
-  }
 
   async function loadTokenIds() {
     if (!collection) return;

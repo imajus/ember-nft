@@ -33,13 +33,13 @@ export default function Collection() {
 
   // Setup event listeners after collection data is loaded
   useEffect(() => {
-    if (collection && collectionContract) {
+    if (collectionContract) {
       setupEventListeners();
       return () => {
         cleanupEventListeners();
       };
     }
-  }, [collection, collectionContract]);
+  }, [collectionContract]);
 
   async function loadCollectionData() {
     try {

@@ -23,12 +23,18 @@ export default function TokenCard({ tokenId, collection, onTokenUpdate }) {
   useEffect(() => {
     if (collection) {
       initializeContract();
-      setupEventListeners();
     }
-    return () => {
-      cleanupEventListeners();
-    };
-  }, [collection, tokenId]);
+  }, [collection]);
+
+  useEffect(() => {
+    if (collectionContract) {
+      fetchTokenData();
+      setupEventListeners();
+      return () => {
+        cleanupEventListeners();
+      };
+    }
+  }, [collectionContract]);
 
   async function initializeContract() {
     try {
@@ -38,19 +44,16 @@ export default function TokenCard({ tokenId, collection, onTokenUpdate }) {
         provider
       );
       setCollectionContract(contract);
-      // Now fetch token data and setup listeners with the same contract instance
-      await fetchTokenData(contract);
     } catch (error) {
       console.error(`Error initializing contract for token ${tokenId}:`, error);
     }
   }
 
-  async function fetchTokenData(contract) {
-    if (!collection || !contract) return;
+  async function fetchTokenData() {
     try {
-      const owner = await contract.ownerOf(tokenId);
-      const tokenURI = await contract.tokenURI(tokenId);
-      const isGenerated = await contract.isTokenGenerated(tokenId);
+      const owner = await collectionContract.ownerOf(tokenId);
+      const tokenURI = await collectionContract.tokenURI(tokenId);
+      const isGenerated = await collectionContract.isTokenGenerated(tokenId);
       let imageUrl = token.image;
       let tokenName = `Token #${tokenId}`;
       if (isGenerated && tokenURI) {
@@ -133,7 +136,6 @@ export default function TokenCard({ tokenId, collection, onTokenUpdate }) {
   }
 
   function setupEventListeners() {
-    if (!collection || !collectionContract) return;
     try {
       // Listen for TokenURIUpdated events for this specific token
       const filter = collectionContract.filters.TokenURIUpdated();
@@ -156,7 +158,6 @@ export default function TokenCard({ tokenId, collection, onTokenUpdate }) {
   }
 
   function cleanupEventListeners() {
-    if (!collectionContract) return;
     try {
       // Remove listeners for this specific token using the same contract instance
       collectionContract.removeAllListeners();
