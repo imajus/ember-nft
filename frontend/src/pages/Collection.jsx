@@ -189,9 +189,9 @@ export default function Collection() {
           </Link>
         </div>
 
-        <div className="bg-white rounded-xl shadow-lg p-8 mb-8 inline-block">
-          <div className="flex flex-col md:flex-row gap-8">
-            <div className="w-100 aspect-square overflow-hidden rounded-lg flex-shrink-0">
+        <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
+          <div className="flex items-center gap-6">
+            <div className="w-20 h-20 overflow-hidden rounded-lg flex-shrink-0">
               <img
                 src={coverImage}
                 alt={collection.name}
@@ -200,51 +200,53 @@ export default function Collection() {
                 }`}
               />
             </div>
-            <div className="min-w-80">
-              <h1 className="text-4xl font-bold text-gray-800 mb-4">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-2xl font-bold text-gray-800 mb-2">
                 {collection.name}
               </h1>
-              <p className="text-gray-600 text-lg mb-6">{collection.prompt}</p>
-              <div className="space-y-4">
-                <div className="flex justify-between">
+              <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                {collection.prompt}
+              </p>
+              <div className="flex flex-wrap items-center gap-x-8 gap-y-2 text-sm">
+                <div className="flex items-center gap-2">
                   <span className="text-gray-500">Symbol:</span>
                   <span className="font-medium">{collection.symbol}</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex items-center gap-2">
                   <span className="text-gray-500">Creator:</span>
                   <span className="font-medium">
                     {collection.creator.slice(0, 6)}...
                     {collection.creator.slice(-4)}
                   </span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex items-center gap-2">
                   <span className="text-gray-500">Supply:</span>
                   <span className="font-medium">
                     {collection.currentSupply} / {collection.maxSupply}
                   </span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Mint Price:</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-500">Price:</span>
                   <span className="font-bold text-purple-600">
                     {collection.mintPrice} ETH
                   </span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex items-center gap-2">
                   <span className="text-gray-500">Contract:</span>
-                  <span className="font-mono text-sm">
+                  <span className="font-mono text-xs">
                     {collection.contractAddress.slice(0, 10)}...
                     {collection.contractAddress.slice(-8)}
                   </span>
                 </div>
-                <div className="mt-6 pt-4">
-                  <button
-                    className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:shadow-lg transition-all duration-200 transform hover:scale-105"
-                    onClick={mintNft}
-                  >
-                    Mint NFT ({collection.mintPrice} ETH)
-                  </button>
-                </div>
               </div>
+            </div>
+            <div className="flex-shrink-0">
+              <button
+                className="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:shadow-lg transition-all duration-200 transform hover:scale-105"
+                onClick={mintNft}
+              >
+                Mint ({collection.mintPrice} ETH)
+              </button>
             </div>
           </div>
         </div>
