@@ -9,13 +9,9 @@ export default function CollectionCard({ collection }) {
           src={coverImage}
           alt={collection.name}
           className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
-          // onError={(e) => {
-          //   if (
-          //     e.target.src !== 'https://placehold.co/400x400?text=Collection'
-          //   ) {
-          //     e.target.src = 'https://placehold.co/400x400?text=Collection';
-          //   }
-          // }}
+          onError={(e) => {
+            e.target.src = '/error.gif';
+          }}
         />
       </div>
       <div className="p-6">

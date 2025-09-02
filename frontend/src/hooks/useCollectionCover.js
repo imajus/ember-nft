@@ -7,7 +7,7 @@ import {
 } from '../lib/ipfs';
 import { useProvider } from './useProvider';
 
-const DEFAULT_COVER_IMAGE = 'https://placehold.co/400x400?text=Collection';
+const DEFAULT_COVER_IMAGE = '/loading.gif';
 
 export function useCollectionCover(contractAddress) {
   const { getProvider } = useProvider();

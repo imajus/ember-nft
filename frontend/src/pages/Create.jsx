@@ -9,7 +9,6 @@ export default function Create() {
   const [formData, setFormData] = useState({
     name: '',
     symbol: '',
-    description: '',
     prompt: '',
     supply: '',
     price: '',
@@ -141,20 +140,7 @@ export default function Create() {
                 Short identifier for your collection (auto-generated from name)
               </p>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Description
-              </label>
-              <textarea
-                value={formData.description}
-                onChange={(e) =>
-                  handleInputChange('description', e.target.value)
-                }
-                rows={4}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                placeholder="Describe your collection..."
-              />
-            </div>
+
           </div>
         );
       case 2:
@@ -252,10 +238,7 @@ export default function Create() {
                 <h3 className="font-semibold text-gray-800">Symbol</h3>
                 <p className="text-gray-600">{formData.symbol}</p>
               </div>
-              <div>
-                <h3 className="font-semibold text-gray-800">Description</h3>
-                <p className="text-gray-600">{formData.description}</p>
-              </div>
+
               <div>
                 <h3 className="font-semibold text-gray-800">AI Prompt</h3>
                 <p className="text-gray-600">{formData.prompt}</p>
@@ -354,8 +337,7 @@ export default function Create() {
               disabled={
                 (currentStep === 1 &&
                   (!formData.name ||
-                    !formData.symbol ||
-                    !formData.description)) ||
+                    !formData.symbol)) ||
                 (currentStep === 2 && !formData.prompt) ||
                 (currentStep === 3 && (!formData.supply || !formData.price))
               }
