@@ -26,7 +26,7 @@ export default function TokensList({ collection }) {
     try {
       const currentSupply = parseInt(collection.currentSupply);
       const tokenIdList = [];
-      for (let i = 1; i <= currentSupply; i++) {
+      for (let i = currentSupply; i >= 1; i--) {
         tokenIdList.push(i);
       }
       setTokenIds(tokenIdList);
