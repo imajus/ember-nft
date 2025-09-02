@@ -1,4 +1,5 @@
 import { ethers } from 'ethers';
+import { getDeployments } from 'ember-nft-contracts';
 
 /**
  * Get NFT Collection Factory contract instance
@@ -7,15 +8,9 @@ import { ethers } from 'ethers';
 export async function getNFTCollectionFactory(runner) {
   try {
     const { chainId } = await runner.provider.getNetwork();
-    const { default: addresses } = await import(
-      `./deployments/chain-${chainId}/deployed_addresses.json`
-    );
-    const { default: abi } = await import('./abi/NFTCollectionFactory.json');
-    return new ethers.Contract(
-      addresses['NFTCollectionFactoryModule#NFTCollectionFactory'],
-      abi,
-      runner
-    );
+    const deployments = getDeployments(chainId);
+    const { abi, address } = deployments.NFTCollectionFactory;
+    return new ethers.Contract(address, abi, runner);
   } catch (error) {
     console.error('Error loading NFT Collection Factory contract:', error);
     console.warn('Make sure the contract is deployed to the current network');
@@ -30,7 +25,8 @@ export async function getNFTCollectionFactory(runner) {
  */
 export async function getNFTCollection(contractAddress, runner) {
   try {
-    const { default: abi } = await import('./abi/NFTCollection.json');
+    const deployments = getDeployments(31337); // chainId doesn't matter for ABI-only access
+    const { abi } = deployments.NFTCollection;
     return new ethers.Contract(contractAddress, abi, runner);
   } catch (error) {
     console.error('Error loading NFT Collection contract:', error);
