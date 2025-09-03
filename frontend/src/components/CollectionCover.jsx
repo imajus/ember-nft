@@ -5,11 +5,11 @@ import {
   getImageFromMetadata,
   convertIpfsToHttp,
 } from '../lib/ipfs';
-import { useProvider } from './useProvider';
+import { useProvider } from '../hooks/useProvider';
 
 const DEFAULT_COVER_IMAGE = '/loading.gif';
 
-export function useCollectionCover(contractAddress) {
+export default function CollectionCover({ contractAddress, alt = 'Collection cover', className = '', ...props }) {
   const { getProvider } = useProvider();
   const [coverImage, setCoverImage] = useState(DEFAULT_COVER_IMAGE);
   const [isLoading, setIsLoading] = useState(true);
@@ -28,7 +28,6 @@ export function useCollectionCover(contractAddress) {
       return;
     }
     try {
-      // setCoverImage('/loading.gif');
       setIsLoading(true);
       setError(null);
       const contract = await getNFTCollection(contractAddress, getProvider());
@@ -67,10 +66,16 @@ export function useCollectionCover(contractAddress) {
       setIsLoading(false);
     }
   }
-  return {
-    coverImage,
-    isLoading,
-    error,
-    refetch: fetchCollectionCover,
-  };
+
+  return (
+    <img
+      src={coverImage}
+      alt={alt}
+      className={`${className} ${isLoading ? 'animate-pulse bg-gray-200' : ''}`}
+      onError={(e) => {
+        e.target.src = '/error.gif';
+      }}
+      {...props}
+    />
+  );
 }

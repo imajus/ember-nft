@@ -4,7 +4,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useAppKit } from '@reown/appkit/react';
 import { getNFTCollection, getNFTCollectionFactory } from '../lib/contracts';
 import { useProvider } from '../hooks/useProvider';
-import { useCollectionCover } from '../hooks/useCollectionCover';
+import CollectionCover from '../components/CollectionCover';
 import TokensList from '../components/TokensList';
 
 export default function Collection() {
@@ -14,9 +14,7 @@ export default function Collection() {
   const [collectionContract, setCollectionContract] = useState(null);
   const { open } = useAppKit();
   const { getProvider, getSigner, isConnected } = useProvider();
-  const { coverImage, isLoading: coverLoading } = useCollectionCover(
-    collection?.contractAddress
-  );
+
 
   useEffect(() => {
     if (collectionId) {
@@ -192,12 +190,10 @@ export default function Collection() {
         <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
           <div className="flex items-center gap-6">
             <div className="w-20 h-20 overflow-hidden rounded-lg flex-shrink-0">
-              <img
-                src={coverImage}
+              <CollectionCover
+                contractAddress={collection.contractAddress}
                 alt={collection.name}
-                className={`w-full h-full object-cover ${
-                  coverLoading ? 'animate-pulse bg-gray-200' : ''
-                }`}
+                className="w-full h-full object-cover"
               />
             </div>
             <div className="flex-1 min-w-0">

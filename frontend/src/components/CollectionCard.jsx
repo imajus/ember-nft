@@ -1,17 +1,13 @@
-import { useCollectionCover } from '../hooks/useCollectionCover';
+import CollectionCover from './CollectionCover';
 
 export default function CollectionCard({ collection }) {
-  const { coverImage } = useCollectionCover(collection.contractAddress);
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-200">
       <div className="aspect-square overflow-hidden relative">
-        <img
-          src={coverImage}
+        <CollectionCover
+          contractAddress={collection.contractAddress}
           alt={collection.name}
           className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
-          onError={(e) => {
-            e.target.src = '/error.gif';
-          }}
         />
       </div>
       <div className="p-6">

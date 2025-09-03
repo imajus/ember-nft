@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useAppKit, useAppKitAccount } from '@reown/appkit/react';
+import { useAppKit } from '@reown/appkit/react';
 import { ethers } from 'ethers';
 import { getNFTCollectionFactory, getNFTCollection } from '../lib/contracts';
 import { useProvider } from '../hooks/useProvider';
-import { mint } from '@reown/appkit/networks';
+import CollectionCover from '../components/CollectionCover';
 
 export default function Dashboard() {
   const [collections, setCollections] = useState([]);
@@ -192,8 +192,8 @@ export default function Dashboard() {
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
-                    <img
-                      src={collection.image}
+                    <CollectionCover
+                      contractAddress={collection.contractAddress}
                       alt={collection.name}
                       className="w-16 h-16 rounded-lg object-cover"
                     />
