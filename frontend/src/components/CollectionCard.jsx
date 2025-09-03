@@ -1,4 +1,5 @@
 import CollectionCover from './CollectionCover';
+import AddressDisplay from './AddressDisplay';
 
 export default function CollectionCard({ collection }) {
   return (
@@ -19,8 +20,7 @@ export default function CollectionCard({ collection }) {
         </p>
         <div className="text-sm text-gray-500 mb-4">
           <p>
-            By: {collection.creator.slice(0, 6)}...
-            {collection.creator.slice(-4)}
+            By: <AddressDisplay address={collection.creator} />
           </p>
           <p>Supply: {collection.maxSupply}</p>
         </div>

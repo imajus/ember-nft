@@ -6,6 +6,7 @@ import { getNFTCollection, getNFTCollectionFactory } from '../lib/contracts';
 import { useProvider } from '../hooks/useProvider';
 import CollectionCover from '../components/CollectionCover';
 import TokensList from '../components/TokensList';
+import AddressDisplay from '../components/AddressDisplay';
 
 export default function Collection() {
   const { collectionId } = useParams();
@@ -210,10 +211,7 @@ export default function Collection() {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-gray-500">Creator:</span>
-                  <span className="font-medium">
-                    {collection.creator.slice(0, 6)}...
-                    {collection.creator.slice(-4)}
-                  </span>
+                  <AddressDisplay address={collection.creator} copyable />
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-gray-500">Supply:</span>
@@ -229,10 +227,7 @@ export default function Collection() {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-gray-500">Contract:</span>
-                  <span className="font-mono text-xs">
-                    {collection.contractAddress.slice(0, 10)}...
-                    {collection.contractAddress.slice(-8)}
-                  </span>
+                  <AddressDisplay address={collection.contractAddress} copyable />
                 </div>
               </div>
             </div>

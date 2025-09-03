@@ -1,6 +1,6 @@
 import { createAppKit } from '@reown/appkit/react';
 import { EthersAdapter } from '@reown/appkit-adapter-ethers';
-import { hardhat, somniaTestnet } from '@reown/appkit/networks';
+import { somniaTestnet } from '@reown/appkit/networks';
 import { defaultsDeep } from 'lodash-es';
 
 const projectId = import.meta.env.VITE_REOWN_PROJECT_ID;

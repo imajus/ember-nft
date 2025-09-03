@@ -6,6 +6,7 @@ import {
   getImageFromMetadata,
   convertIpfsToHttp,
 } from '../lib/ipfs';
+import AddressDisplay from './AddressDisplay';
 
 export default function TokenCard({ tokenId, collection, onTokenUpdate }) {
   const [token, setToken] = useState({
@@ -112,7 +113,6 @@ export default function TokenCard({ tokenId, collection, onTokenUpdate }) {
             `Error fetching metadata for token ${tokenId}:`,
             metadataError
           );
-          ('/loading.gif');
           imageUrl = convertIpfsToHttp(newTokenURI);
         }
         const updatedToken = {
@@ -178,11 +178,6 @@ export default function TokenCard({ tokenId, collection, onTokenUpdate }) {
           alt={`Token ${token.tokenId}`}
           className="`w-full h-full object-cover transition-all duration-200 hover:scale-105"
         />
-        {token.isLoading && (
-          <div className="absolute inset-0 bg-gray-100 flex items-center justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
-          </div>
-        )}
       </div>
       <div className="p-4">
         <h3
@@ -200,7 +195,7 @@ export default function TokenCard({ tokenId, collection, onTokenUpdate }) {
           >
             {!token.isLoading && token.owner && (
               <>
-                Owner: {token.owner.slice(0, 6)}...{token.owner.slice(-4)}
+                Owner: <AddressDisplay address={token.owner} />
               </>
             )}
           </p>
