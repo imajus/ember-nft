@@ -52,6 +52,7 @@ export default function Collection() {
         provider
       );
       const currentSupply = await collectionContract.getCurrentSupply();
+      const dynamicPrice = await collectionContract.getTokenPrice();
       const collectionData = {
         id: collectionId,
         contractAddress: collectionInfo.contractAddress,
@@ -59,7 +60,7 @@ export default function Collection() {
         symbol: collectionInfo.symbol,
         maxSupply: collectionInfo.maxSupply.toString(),
         currentSupply: currentSupply.toString(),
-        mintPrice: ethers.formatEther(collectionInfo.mintPrice),
+        mintPrice: ethers.formatEther(dynamicPrice),
         creator: collectionInfo.creator,
         prompt: collectionInfo.prompt,
       };
@@ -136,9 +137,9 @@ export default function Collection() {
         collection.contractAddress,
         signer
       );
-      const mintPrice = ethers.parseEther(collection.mintPrice);
+      const dynamicPrice = await collectionContract.getTokenPrice();
       const transaction = await collectionContract.mint({
-        value: mintPrice,
+        value: dynamicPrice,
       });
       await transaction.wait();
       // Don't update supply count here - let the TokenMinted event handle it

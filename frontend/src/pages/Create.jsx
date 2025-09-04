@@ -64,12 +64,15 @@ export default function Create() {
       const symbol = formData.symbol || generateSymbol(formData.name);
       // Convert price to wei
       const mintPrice = ethers.parseEther(formData.price);
+      // Get the collection creation price (LLM generation fee)
+      const creationPrice = await factory.getCollectionPrice();
       const transaction = await factory.createCollection(
         formData.name,
         symbol,
         formData.prompt,
         parseInt(formData.supply),
-        mintPrice
+        mintPrice,
+        { value: creationPrice }
       );
       console.log('Transaction submitted:', transaction.hash);
       // Wait for transaction confirmation

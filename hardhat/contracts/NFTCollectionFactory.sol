@@ -7,9 +7,9 @@ import "./NFTCollection.sol";
 
 contract NFTCollectionFactory is Ownable, ReentrancyGuard {
     uint256 private _collectionIds;
-    uint256 public platformFeePercent = 250; // 2.5% platform fee (250 basis points)
-    address public constant PLATFORM_WALLET =
-        0xe55E9c8E6e2EfB0C7b62E78816B6A9Fed9218C81;
+    uint256 public constant LLM_GENERATION_FEE = 0.001 ether;
+    uint256 public constant PLATFORM_FEE_PERCENT = 250; // 2.5% platform fee (250 basis points)
+    address public constant PLATFORM_WALLET = 0xe55E9c8E6e2EfB0C7b62E78816B6A9Fed9218C81;
 
     mapping(uint256 => address) public collections;
     mapping(address => uint256[]) public creatorCollections;
@@ -42,35 +42,39 @@ contract NFTCollectionFactory is Ownable, ReentrancyGuard {
         string memory prompt,
         uint256 maxSupply,
         uint256 mintPrice
-    ) external nonReentrant returns (uint256) {
+    ) external payable nonReentrant returns (uint256) {
         require(bytes(name).length > 0, "Name cannot be empty");
         require(bytes(symbol).length > 0, "Symbol cannot be empty");
         require(bytes(prompt).length > 0, "Prompt cannot be empty");
         require(maxSupply > 0 && maxSupply <= 10000, "Invalid max supply");
         require(mintPrice > 0, "Mint price must be greater than 0");
-
+        require(msg.value >= LLM_GENERATION_FEE, "Insufficient payment for LLM generation");
+        
         _collectionIds++;
         uint256 newCollectionId = _collectionIds;
 
         address payable[] memory payees = new address payable[](2);
-        uint256[] memory shares = new uint256[](2);
+        uint256[] memory amounts = new uint256[](2);
+
+        uint256 platformFeeAmount = (mintPrice * PLATFORM_FEE_PERCENT) / 10000;
+        uint256 totalPlatformAmount = platformFeeAmount + LLM_GENERATION_FEE;
+        uint256 creatorAmount = mintPrice - platformFeeAmount;
 
         payees[0] = payable(msg.sender);
-        shares[0] = 10000 - platformFeePercent; // Creator gets (100% - platform fee)
+        amounts[0] = creatorAmount;
 
         payees[1] = payable(PLATFORM_WALLET);
-        shares[1] = platformFeePercent; // Platform gets platform fee
+        amounts[1] = totalPlatformAmount;
 
         NFTCollection newCollection = new NFTCollection(
             name,
             symbol,
             prompt,
             maxSupply,
-            mintPrice,
             msg.sender,
             address(this),
             payees,
-            shares
+            amounts
         );
 
         address collectionAddress = address(newCollection);
@@ -85,9 +89,13 @@ contract NFTCollectionFactory is Ownable, ReentrancyGuard {
             symbol: symbol,
             prompt: prompt,
             maxSupply: maxSupply,
-            mintPrice: mintPrice,
+            mintPrice: creatorAmount + totalPlatformAmount,
             createdAt: block.timestamp
         });
+
+        payable(PLATFORM_WALLET).transfer(msg.value);
+
+        newCollection.factoryMint(msg.sender);
 
         emit CollectionCreated(newCollectionId, collectionAddress, msg.sender);
 
@@ -116,6 +124,10 @@ contract NFTCollectionFactory is Ownable, ReentrancyGuard {
 
     function getTotalCollections() external view returns (uint256) {
         return _collectionIds;
+    }
+
+    function getCollectionPrice() external pure returns (uint256) {
+        return LLM_GENERATION_FEE;
     }
 
     function updateTokenURI(

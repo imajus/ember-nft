@@ -8,7 +8,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract NFTCollection is ERC721URIStorage, ReentrancyGuard, Ownable {
     uint256 private _tokenIds;
     uint256 public maxSupply;
-    uint256 public mintPrice;
     string public prompt;
     address public creator;
     address public factory;
@@ -16,8 +15,7 @@ contract NFTCollection is ERC721URIStorage, ReentrancyGuard, Ownable {
     uint256 public mintEndTime;
 
     address payable[] public payees;
-    uint256[] public shares;
-    uint256 public totalShares;
+    uint256[] public amounts;
 
     mapping(uint256 => bool) private _tokenGenerated;
 
@@ -34,31 +32,34 @@ contract NFTCollection is ERC721URIStorage, ReentrancyGuard, Ownable {
         string memory symbol,
         string memory _prompt,
         uint256 _maxSupply,
-        uint256 _mintPrice,
         address _creator,
         address _factory,
         address payable[] memory _payees,
-        uint256[] memory _shares
+        uint256[] memory _amounts
     ) ERC721(name, symbol) Ownable(_creator) {
         require(
-            _payees.length == _shares.length,
-            "Payees and shares length mismatch"
+            _payees.length == _amounts.length,
+            "Payees and amounts length mismatch"
         );
         require(_payees.length > 0, "Must have at least one payee");
 
         prompt = _prompt;
         maxSupply = _maxSupply;
-        mintPrice = _mintPrice;
         creator = _creator;
         factory = _factory;
         mintStartTime = block.timestamp;
         mintEndTime = block.timestamp + 30 days;
 
         payees = _payees;
-        shares = _shares;
-        for (uint256 i = 0; i < _shares.length; i++) {
-            totalShares += _shares[i];
+        amounts = _amounts;
+    }
+
+    function getTokenPrice() public view returns (uint256) {
+        uint256 totalPrice = 0;
+        for (uint256 i = 0; i < amounts.length; i++) {
+            totalPrice += amounts[i];
         }
+        return totalPrice;
     }
 
     modifier onlyCreatorOrOwner() {
@@ -77,13 +78,13 @@ contract NFTCollection is ERC721URIStorage, ReentrancyGuard, Ownable {
     }
 
     function mint() external payable nonReentrant mintingAllowed {
-        require(msg.value >= mintPrice, "Insufficient payment");
+        uint256 price = getTokenPrice();
+        require(msg.value >= price, "Insufficient payment");
 
-        // Distribute payments immediately
+        // Distribute payments based on fixed amounts
         for (uint256 i = 0; i < payees.length; i++) {
-            uint256 payment = (msg.value * shares[i]) / totalShares;
-            payable(payees[i]).transfer(payment);
-            emit PaymentDistributed(payees[i], payment);
+            payable(payees[i]).transfer(amounts[i]);
+            emit PaymentDistributed(payees[i], amounts[i]);
         }
 
         _tokenIds++;
@@ -93,6 +94,19 @@ contract NFTCollection is ERC721URIStorage, ReentrancyGuard, Ownable {
         _tokenGenerated[newTokenId] = false;
 
         emit TokenMinted(newTokenId, msg.sender, block.timestamp);
+    }
+
+    function factoryMint(address to) external nonReentrant {
+        require(msg.sender == factory, "Only factory can mint");
+        require(_tokenIds < maxSupply, "Max supply reached");
+
+        _tokenIds++;
+        uint256 newTokenId = _tokenIds;
+
+        _mint(to, newTokenId);
+        _tokenGenerated[newTokenId] = false;
+
+        emit TokenMinted(newTokenId, to, block.timestamp);
     }
 
     function updateTokenURI(

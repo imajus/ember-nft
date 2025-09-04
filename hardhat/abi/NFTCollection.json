@@ -20,10 +20,6 @@
         "name": "_maxSupply"
       },
       {
-        "type": "uint256",
-        "name": "_mintPrice"
-      },
-      {
         "type": "address",
         "name": "_creator"
       },
@@ -37,7 +33,7 @@
       },
       {
         "type": "uint256[]",
-        "name": "_shares"
+        "name": "_amounts"
       }
     ]
   },
@@ -328,6 +324,23 @@
   },
   {
     "type": "function",
+    "name": "amounts",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [
+      {
+        "type": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "uint256"
+      }
+    ]
+  },
+  {
+    "type": "function",
     "name": "approve",
     "constant": false,
     "payable": false,
@@ -389,6 +402,19 @@
   },
   {
     "type": "function",
+    "name": "factoryMint",
+    "constant": false,
+    "payable": false,
+    "inputs": [
+      {
+        "type": "address",
+        "name": "to"
+      }
+    ],
+    "outputs": []
+  },
+  {
+    "type": "function",
     "name": "getApproved",
     "constant": true,
     "stateMutability": "view",
@@ -428,6 +454,19 @@
     "outputs": [
       {
         "type": "string"
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "getTokenPrice",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "uint256"
       }
     ]
   },
@@ -514,19 +553,6 @@
   {
     "type": "function",
     "name": "mintEndTime",
-    "constant": true,
-    "stateMutability": "view",
-    "payable": false,
-    "inputs": [],
-    "outputs": [
-      {
-        "type": "uint256"
-      }
-    ]
-  },
-  {
-    "type": "function",
-    "name": "mintPrice",
     "constant": true,
     "stateMutability": "view",
     "payable": false,
@@ -697,23 +723,6 @@
   },
   {
     "type": "function",
-    "name": "shares",
-    "constant": true,
-    "stateMutability": "view",
-    "payable": false,
-    "inputs": [
-      {
-        "type": "uint256"
-      }
-    ],
-    "outputs": [
-      {
-        "type": "uint256"
-      }
-    ]
-  },
-  {
-    "type": "function",
     "name": "supportsInterface",
     "constant": true,
     "stateMutability": "view",
@@ -758,19 +767,6 @@
     "outputs": [
       {
         "type": "string"
-      }
-    ]
-  },
-  {
-    "type": "function",
-    "name": "totalShares",
-    "constant": true,
-    "stateMutability": "view",
-    "payable": false,
-    "inputs": [],
-    "outputs": [
-      {
-        "type": "uint256"
       }
     ]
   },

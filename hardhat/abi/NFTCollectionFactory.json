@@ -70,6 +70,32 @@
   },
   {
     "type": "function",
+    "name": "LLM_GENERATION_FEE",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "uint256"
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "PLATFORM_FEE_PERCENT",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "uint256"
+      }
+    ]
+  },
+  {
+    "type": "function",
     "name": "PLATFORM_WALLET",
     "constant": true,
     "stateMutability": "view",
@@ -152,7 +178,8 @@
     "type": "function",
     "name": "createCollection",
     "constant": false,
-    "payable": false,
+    "stateMutability": "payable",
+    "payable": true,
     "inputs": [
       {
         "type": "string",
@@ -254,6 +281,19 @@
   },
   {
     "type": "function",
+    "name": "getCollectionPrice",
+    "constant": true,
+    "stateMutability": "pure",
+    "payable": false,
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "uint256"
+      }
+    ]
+  },
+  {
+    "type": "function",
     "name": "getCollectionsByCreator",
     "constant": true,
     "stateMutability": "view",
@@ -293,19 +333,6 @@
     "outputs": [
       {
         "type": "address"
-      }
-    ]
-  },
-  {
-    "type": "function",
-    "name": "platformFeePercent",
-    "constant": true,
-    "stateMutability": "view",
-    "payable": false,
-    "inputs": [],
-    "outputs": [
-      {
-        "type": "uint256"
       }
     ]
   },

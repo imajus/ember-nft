@@ -12,9 +12,9 @@
     "build": "node build-contracts.js",
     "chain": "hardhat node",
     "compile": "hardhat compile",
-    "deploy:test": "hardhat ignition deploy ignition/modules/NFTCollectionFactory.js && npm run build",
-    "deploy:local": "hardhat ignition deploy ignition/modules/NFTCollectionFactory.js --network localhost && npm run build",
-    "deploy:prod": "hardhat ignition deploy ignition/modules/NFTCollectionFactory.js --network somnia && npm run build",
+    "deploy:test": "hardhat ignition deploy ignition/modules/NFTCollectionFactory.js",
+    "deploy:local": "hardhat ignition deploy ignition/modules/NFTCollectionFactory.js --network localhost --reset && npm run build",
+    "deploy:prod": "hardhat ignition deploy ignition/modules/NFTCollectionFactory.js --network somnia --reset && npm run build",
     "verify:prod": "npx hardhat verify blockscout --network somnia --contract contracts/SmartContract.sol:SmartContract $(jq -r '.\"NFTCollectionFactoryModule#NFTCollectionFactory\"' ./ignition/deployments/chain-50312/deployed_addresses.json)"
   },
   "devDependencies": {

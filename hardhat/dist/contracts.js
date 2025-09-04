@@ -72,6 +72,32 @@ const abis = {
     },
     {
       "type": "function",
+      "name": "LLM_GENERATION_FEE",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [],
+      "outputs": [
+        {
+          "type": "uint256"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "PLATFORM_FEE_PERCENT",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [],
+      "outputs": [
+        {
+          "type": "uint256"
+        }
+      ]
+    },
+    {
+      "type": "function",
       "name": "PLATFORM_WALLET",
       "constant": true,
       "stateMutability": "view",
@@ -154,7 +180,8 @@ const abis = {
       "type": "function",
       "name": "createCollection",
       "constant": false,
-      "payable": false,
+      "stateMutability": "payable",
+      "payable": true,
       "inputs": [
         {
           "type": "string",
@@ -256,6 +283,19 @@ const abis = {
     },
     {
       "type": "function",
+      "name": "getCollectionPrice",
+      "constant": true,
+      "stateMutability": "pure",
+      "payable": false,
+      "inputs": [],
+      "outputs": [
+        {
+          "type": "uint256"
+        }
+      ]
+    },
+    {
+      "type": "function",
       "name": "getCollectionsByCreator",
       "constant": true,
       "stateMutability": "view",
@@ -295,19 +335,6 @@ const abis = {
       "outputs": [
         {
           "type": "address"
-        }
-      ]
-    },
-    {
-      "type": "function",
-      "name": "platformFeePercent",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "inputs": [],
-      "outputs": [
-        {
-          "type": "uint256"
         }
       ]
     },
@@ -376,10 +403,6 @@ const abis = {
           "name": "_maxSupply"
         },
         {
-          "type": "uint256",
-          "name": "_mintPrice"
-        },
-        {
           "type": "address",
           "name": "_creator"
         },
@@ -393,7 +416,7 @@ const abis = {
         },
         {
           "type": "uint256[]",
-          "name": "_shares"
+          "name": "_amounts"
         }
       ]
     },
@@ -684,6 +707,23 @@ const abis = {
     },
     {
       "type": "function",
+      "name": "amounts",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [
+        {
+          "type": "uint256"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "uint256"
+        }
+      ]
+    },
+    {
+      "type": "function",
       "name": "approve",
       "constant": false,
       "payable": false,
@@ -745,6 +785,19 @@ const abis = {
     },
     {
       "type": "function",
+      "name": "factoryMint",
+      "constant": false,
+      "payable": false,
+      "inputs": [
+        {
+          "type": "address",
+          "name": "to"
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "type": "function",
       "name": "getApproved",
       "constant": true,
       "stateMutability": "view",
@@ -784,6 +837,19 @@ const abis = {
       "outputs": [
         {
           "type": "string"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "getTokenPrice",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [],
+      "outputs": [
+        {
+          "type": "uint256"
         }
       ]
     },
@@ -870,19 +936,6 @@ const abis = {
     {
       "type": "function",
       "name": "mintEndTime",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "inputs": [],
-      "outputs": [
-        {
-          "type": "uint256"
-        }
-      ]
-    },
-    {
-      "type": "function",
-      "name": "mintPrice",
       "constant": true,
       "stateMutability": "view",
       "payable": false,
@@ -1053,23 +1106,6 @@ const abis = {
     },
     {
       "type": "function",
-      "name": "shares",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "inputs": [
-        {
-          "type": "uint256"
-        }
-      ],
-      "outputs": [
-        {
-          "type": "uint256"
-        }
-      ]
-    },
-    {
-      "type": "function",
       "name": "supportsInterface",
       "constant": true,
       "stateMutability": "view",
@@ -1114,19 +1150,6 @@ const abis = {
       "outputs": [
         {
           "type": "string"
-        }
-      ]
-    },
-    {
-      "type": "function",
-      "name": "totalShares",
-      "constant": true,
-      "stateMutability": "view",
-      "payable": false,
-      "inputs": [],
-      "outputs": [
-        {
-          "type": "uint256"
         }
       ]
     },
@@ -2002,7 +2025,7 @@ const deployments = {
     "NFTCollectionFactoryModule#NFTCollectionFactory": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
   },
   "50312": {
-    "NFTCollectionFactoryModule#NFTCollectionFactory": "0x647ae194d4a2536aF93464f718906aDf43910A95"
+    "NFTCollectionFactoryModule#NFTCollectionFactory": "0x7e18d4F5d20E27b6750F79FD3Fe34001Dd2D8534"
   }
 };
 
