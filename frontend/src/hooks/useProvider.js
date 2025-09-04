@@ -1,30 +1,36 @@
-import { useAppKitAccount, useAppKitProvider } from '@reown/appkit/react';
+import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { ethers } from 'ethers';
 
 /**
- * Lightweight wrapper around Reown's useAppKitProvider
+ * Lightweight wrapper around Privy's authentication and wallet hooks
  * Returns ethers provider and signer for Web3 interactions
  */
 export function useProvider() {
-  const { address, isConnected } = useAppKitAccount();
-  const { walletProvider } = useAppKitProvider('eip155');
+  const { authenticated } = usePrivy();
+  const { wallets } = useWallets();
+  
+  const embeddedWallet = wallets.find(wallet => wallet.walletClientType === 'privy');
+  const address = embeddedWallet?.address;
+  const isConnected = authenticated && !!address;
 
   const getProvider = () => {
     return new ethers.WebSocketProvider('wss://dream-rpc.somnia.network/ws');
   };
 
   const getSigner = async () => {
-    if (!walletProvider) {
+    if (!embeddedWallet) {
       throw new Error('Wallet not connected');
     }
-    const provider = new ethers.BrowserProvider(walletProvider);
-    return await provider.getSigner();
+    
+    const provider = await embeddedWallet.getEthereumProvider();
+    const ethersProvider = new ethers.BrowserProvider(provider);
+    return await ethersProvider.getSigner();
   };
 
   return {
     address,
     isConnected,
-    // walletProvider,
+    wallet: embeddedWallet,
     getProvider,
     getSigner,
   };

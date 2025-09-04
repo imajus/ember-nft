@@ -1,6 +1,5 @@
-import { useAppKitNetwork } from '@reown/appkit/react';
-import { somniaTestnet } from '@reown/appkit/networks';
 import PropTypes from 'prop-types';
+import { somniaTestnet } from '../lib/privy';
 
 /**
  * @typedef {Object} AddressDisplayProps
@@ -18,11 +17,9 @@ export default function AddressDisplay({
   className = '',
   copyable = false,
 }) {
-  const { caipNetwork } = useAppKitNetwork();
-
   if (!address) return null;
 
-  const network = caipNetwork ?? somniaTestnet;
+  const network = somniaTestnet;
 
   const formatAddress = (addr) => {
     if (!addr || addr.length < 10) return addr;
