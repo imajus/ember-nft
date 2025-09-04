@@ -1,5 +1,3 @@
-import { PinataSDK } from 'pinata';
-
 /**
  * Convert IPFS URL to Pinata gateway URL
  * @param {string} ipfsUrl - IPFS URL (ipfs://hash or ipfs://hash/path)
