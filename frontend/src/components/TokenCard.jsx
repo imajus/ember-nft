@@ -1,11 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getNFTCollection } from '../lib/contracts';
 import { useProvider } from '../hooks/useProvider';
-import {
-  fetchTokenMetadata,
-  getImageFromMetadata,
-  convertIpfsToHttp,
-} from '../lib/ipfs';
+import { fetchTokenMetadata, getImageFromMetadata } from '../lib/ipfs';
 import AddressDisplay from './AddressDisplay';
 
 export default function TokenCard({ tokenId, collection, onTokenUpdate }) {
@@ -69,7 +65,7 @@ export default function TokenCard({ tokenId, collection, onTokenUpdate }) {
             `Error fetching metadata for token ${tokenId}:`,
             metadataError
           );
-          imageUrl = convertIpfsToHttp(tokenURI);
+          imageUrl = '/error.gif';
         }
       }
       const tokenData = {
@@ -113,7 +109,7 @@ export default function TokenCard({ tokenId, collection, onTokenUpdate }) {
             `Error fetching metadata for token ${tokenId}:`,
             metadataError
           );
-          imageUrl = convertIpfsToHttp(newTokenURI);
+          imageUrl = '/error.gif'; //convertIpfsToHttp(newTokenURI);
         }
         const updatedToken = {
           ...token,

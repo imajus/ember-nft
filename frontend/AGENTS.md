@@ -21,13 +21,13 @@
 
 - `src/components/` - Reusable React components
 - `src/pages/` - Route page components
-- `src/lib/` - Utilities (appkit.js, contracts.js)
+- `src/lib/` - Utilities (privy.js, contracts.js)
 - `src/abi/` - Contract ABIs from Hardhat
 - **Styling**: TailwindCSS utilities, globals.css for base styles
 
 ## Web3 Integration
 
-- **Wallet**: Reown AppKit (@reown/appkit)
+- **Wallet**: Privy (@privy-io/react-auth)
 - **Blockchain**: Ethers.js v6, support local/Somnia networks
 - **Contracts**: Dynamic loading based on chainId, error handling for missing deployments
 

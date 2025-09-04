@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAppKit } from '@reown/appkit/react';
+import { usePrivy } from '@privy-io/react-auth';
 import { ethers } from 'ethers';
 import { getNFTCollectionFactory } from '../lib/contracts';
 import { useProvider } from '../hooks/useProvider';
@@ -18,7 +18,7 @@ export default function Create() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { open } = useAppKit();
+  const { login } = usePrivy();
   const { getSigner, isConnected } = useProvider();
 
   const handleInputChange = (field, value) => {
@@ -50,7 +50,7 @@ export default function Create() {
 
   const handleSubmit = async () => {
     if (!isConnected) {
-      open();
+      login();
       return;
     }
 

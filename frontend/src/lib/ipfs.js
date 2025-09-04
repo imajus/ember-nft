@@ -1,6 +1,4 @@
-/**
- * IPFS utilities for converting IPFS URLs to HTTP gateway URLs
- */
+import { PinataSDK } from 'pinata';
 
 /**
  * Convert IPFS URL to Pinata gateway URL
@@ -14,7 +12,7 @@ export function convertIpfsToHttp(ipfsUrl) {
 
   if (ipfsUrl.startsWith('ipfs://')) {
     const hash = ipfsUrl.replace('ipfs://', '');
-    return `https://gateway.pinata.cloud/ipfs/${hash}`;
+    return `https://majus.mypinata.cloud/ipfs/${hash}`;
   }
 
   if (ipfsUrl.startsWith('https://') || ipfsUrl.startsWith('http://')) {
@@ -35,11 +33,11 @@ export async function fetchTokenMetadata(tokenURI) {
   try {
     const httpUrl = convertIpfsToHttp(tokenURI);
     const response = await fetch(httpUrl);
-    
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     const metadata = await response.json();
     return metadata;
   } catch (error) {
@@ -55,7 +53,7 @@ export async function fetchTokenMetadata(tokenURI) {
  */
 export function getImageFromMetadata(metadata) {
   if (!metadata || !metadata.image) {
-    return 'https://placehold.co/300x300?text=No+Image';
+    return 'https://placehold.co/300x300?text=404';
   }
 
   return convertIpfsToHttp(metadata.image);
