@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
-import { useAppKit } from '@reown/appkit/react';
+import { usePrivy } from '@privy-io/react-auth';
 
 export default function Home() {
-  const { open } = useAppKit();
+  const { login } = usePrivy();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50">
@@ -64,7 +64,7 @@ export default function Home() {
             Join creators who are already building the future of AI-generated NFTs
           </p>
           <button
-            onClick={() => open()}
+            onClick={() => login()}
             className="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:shadow-lg transition-all duration-200 transform hover:scale-105"
           >
             Connect Wallet to Get Started

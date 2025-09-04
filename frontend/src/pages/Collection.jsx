@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useAppKit } from '@reown/appkit/react';
+import { usePrivy } from '@privy-io/react-auth';
 import { getNFTCollection, getNFTCollectionFactory } from '../lib/contracts';
 import { useProvider } from '../hooks/useProvider';
 import CollectionCover from '../components/CollectionCover';
@@ -13,7 +13,7 @@ export default function Collection() {
   const [collection, setCollection] = useState(null);
   const [loadingState, setLoadingState] = useState('not-loaded');
   const [collectionContract, setCollectionContract] = useState(null);
-  const { open } = useAppKit();
+  const { login } = usePrivy();
   const { getProvider, getSigner, isConnected } = useProvider();
 
 
@@ -126,7 +126,7 @@ export default function Collection() {
 
   async function mintNft() {
     if (!isConnected) {
-      open();
+      login();
       return;
     }
     if (!collection) return;
@@ -233,7 +233,7 @@ export default function Collection() {
             </div>
             <div className="flex-shrink-0">
               <button
-                className="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:shadow-lg transition-all duration-200 transform hover:scale-105"
+                className="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:shadow-lg transition-all duration-200 transform hover:scale-105 cursor-pointer"
                 onClick={mintNft}
               >
                 Mint ({collection.mintPrice} ETH)

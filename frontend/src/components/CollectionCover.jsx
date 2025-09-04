@@ -9,7 +9,12 @@ import { useProvider } from '../hooks/useProvider';
 
 const DEFAULT_COVER_IMAGE = '/loading.gif';
 
-export default function CollectionCover({ contractAddress, alt = 'Collection cover', className = '', ...props }) {
+export default function CollectionCover({
+  contractAddress,
+  alt = 'Collection cover',
+  className = '',
+  ...props
+}) {
   const { getProvider } = useProvider();
   const [coverImage, setCoverImage] = useState(DEFAULT_COVER_IMAGE);
   const [isLoading, setIsLoading] = useState(true);
