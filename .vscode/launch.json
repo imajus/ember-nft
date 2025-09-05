@@ -8,18 +8,16 @@
       "type": "node",
       "name": "Generator",
       "request": "launch",
-      "cwd": "${workspaceFolder}/generator",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run-script", "dev"],
+      "runtimeArgs": ["run-script", "dev", "--workspace", "generator"],
       "skipFiles": ["<node_internals>/**"]
     },
     {
       "type": "node",
       "name": "Frontend",
       "request": "launch",
-      "cwd": "${workspaceFolder}/frontend",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run-script", "dev"],
+      "runtimeArgs": ["run-script", "dev", "--workspace", "frontend"],
       "skipFiles": ["<node_internals>/**"]
     },
     {
