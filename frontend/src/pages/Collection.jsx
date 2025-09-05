@@ -6,13 +6,14 @@ import { useProvider } from '../hooks/useProvider';
 import CollectionCover from '../components/CollectionCover';
 import TokensList from '../components/TokensList';
 import AddressDisplay from '../components/AddressDisplay';
+import Web3Button from '../components/Web3Button';
 
 export default function Collection() {
   const { collectionId } = useParams();
   const [collection, setCollection] = useState(null);
   const [loadingState, setLoadingState] = useState('not-loaded');
   const [collectionContract, setCollectionContract] = useState(null);
-  const { getProvider, getSigner, isConnected, connect } = useProvider();
+  const { getProvider, getSigner } = useProvider();
 
   useEffect(() => {
     if (collectionId) {
@@ -123,10 +124,6 @@ export default function Collection() {
   }
 
   async function mintNft() {
-    if (!isConnected) {
-      connect();
-      return;
-    }
     if (!collection) return;
     try {
       const signer = await getSigner();
@@ -233,12 +230,12 @@ export default function Collection() {
               </div>
             </div>
             <div className="flex-shrink-0">
-              <button
+              <Web3Button
                 className="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:shadow-lg transition-all duration-200 transform hover:scale-105 cursor-pointer"
                 onClick={mintNft}
               >
                 Mint ({collection.mintPrice} ETH)
-              </button>
+              </Web3Button>
             </div>
           </div>
         </div>

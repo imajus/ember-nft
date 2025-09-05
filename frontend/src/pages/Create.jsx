@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { usePrivy } from '@privy-io/react-auth';
 import { ethers } from 'ethers';
 import { getNFTCollectionFactory } from '../lib/contracts';
 import { useProvider } from '../hooks/useProvider';
 import { uploadFileToIPFS } from '../lib/ipfs';
+import Web3Button from '../components/Web3Button';
 
 export default function Create() {
   const [formData, setFormData] = useState({
@@ -21,7 +21,7 @@ export default function Create() {
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { getSigner, isConnected, connect } = useProvider();
+  const { getSigner } = useProvider();
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -120,17 +120,17 @@ export default function Create() {
       const receipt = await transaction.wait();
       console.log('Transaction confirmed:', receipt);
       // Get the collection ID from the event
-      const collectionCreatedEvent = receipt.logs.find(
-        (log) =>
-          log.topics[0] ===
-          ethers.id(
-            'CollectionCreated(uint256,address,address,string,string,uint256,uint256)'
-          )
-      );
-      if (collectionCreatedEvent) {
-        const collectionId = parseInt(collectionCreatedEvent.topics[1]);
-        console.log('Collection created with ID:', collectionId);
-      }
+      // const collectionCreatedEvent = receipt.logs.find(
+      //   (log) =>
+      //     log.topics[0] ===
+      //     ethers.id(
+      //       'CollectionCreated(uint256,address,address,string,string,uint256,uint256)'
+      //     )
+      // );
+      // if (collectionCreatedEvent) {
+      //   const collectionId = parseInt(collectionCreatedEvent.topics[1]);
+      //   console.log('Collection created with ID:', collectionId);
+      // }
       navigate('/dashboard');
     } catch (error) {
       console.error('Error creating collection:', error);
@@ -419,7 +419,7 @@ export default function Create() {
           </button>
 
           {currentStep === 4 ? (
-            <button
+            <Web3Button
               onClick={handleSubmit}
               disabled={
                 isLoading ||
@@ -439,7 +439,7 @@ export default function Create() {
               ) : (
                 'Deploy Collection'
               )}
-            </button>
+            </Web3Button>
           ) : (
             <button
               onClick={nextStep}
