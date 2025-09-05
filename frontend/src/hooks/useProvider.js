@@ -1,22 +1,24 @@
-import { usePrivy, useWallets } from '@privy-io/react-auth';
+import { useConnectWallet, usePrivy, useWallets } from '@privy-io/react-auth';
 import { ethers } from 'ethers';
+
+function getProvider() {
+  return new ethers.WebSocketProvider('wss://dream-rpc.somnia.network/ws');
+}
 
 /**
  * Lightweight wrapper around Privy's wallet hooks
  * Returns ethers provider and signer for Web3 interactions
  */
 export function useProvider() {
-  const { authenticated } = usePrivy();
+  // const { ready, user } = usePrivy();
   const { wallets } = useWallets();
+  const { connectWallet } = useConnectWallet();
 
   // Get the first connected wallet (embedded or external)
-  const connectedWallet = wallets.find(wallet => wallet.walletClientType === 'privy' || wallet.connectorType);
+  const connectedWallet = wallets.find(
+    (wallet) => wallet.walletClientType === 'privy' || wallet.connectorType
+  );
   const address = connectedWallet?.address;
-  const isConnected = authenticated && !!connectedWallet;
-
-  const getProvider = () => {
-    return new ethers.WebSocketProvider('wss://dream-rpc.somnia.network/ws');
-  };
 
   const getSigner = async () => {
     if (!connectedWallet) {
@@ -42,7 +44,8 @@ export function useProvider() {
 
   return {
     address,
-    isConnected,
+    isConnected: !!connectedWallet,
+    connect: connectWallet,
     getProvider,
     getSigner,
   };

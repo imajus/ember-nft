@@ -1,4 +1,4 @@
-import { PinataSDK } from 'pinata-web3';
+import { PinataSDK } from 'pinata';
 import { config } from './config.js';
 
 export class IPFSService {
@@ -9,18 +9,24 @@ export class IPFSService {
     });
   }
 
+  convertIpfsToHttp(ipfsUrl) {
+    return this.pinata.gateways.convert(ipfsUrl);
+  }
+
+  createAccessLink(ipfsUrl) {
+    const cid = ipfsUrl.replace(/^ipfs:\/\//, '');
+    return this.pinata.gateways.private.createAccessLink({
+      cid,
+      expires: 30, // 30 seconds
+    });
+  }
+
   async uploadImage(imageBuffer, filename) {
     try {
       const file = new File([imageBuffer], filename, { type: 'image/png' });
-      const upload = await this.pinata.upload.file(file);
-
-      const imageUrl = `${config.PINATA_GATEWAY_URL}/ipfs/${upload.IpfsHash}`;
-      console.log(`Image uploaded to IPFS: ${imageUrl}`);
-
-      return {
-        hash: upload.IpfsHash,
-        url: imageUrl,
-      };
+      const upload = await this.pinata.upload.public.file(file);
+      console.log(`Image uploaded to IPFS: ${upload.cid}`);
+      return upload.cid;
     } catch (error) {
       console.error('Error uploading image to IPFS:', error);
       throw error;
@@ -29,15 +35,9 @@ export class IPFSService {
 
   async uploadMetadata(metadata) {
     try {
-      const upload = await this.pinata.upload.json(metadata);
-
-      const metadataUrl = `${config.PINATA_GATEWAY_URL}/ipfs/${upload.IpfsHash}`;
-      console.log(`Metadata uploaded to IPFS: ${metadataUrl}`);
-
-      return {
-        hash: upload.IpfsHash,
-        url: metadataUrl,
-      };
+      const upload = await this.pinata.upload.public.json(metadata);
+      console.log(`Metadata uploaded to IPFS: ${upload.cid}`);
+      return upload.cid;
     } catch (error) {
       console.error('Error uploading metadata to IPFS:', error);
       throw error;
@@ -46,19 +46,13 @@ export class IPFSService {
 
   async uploadImageAndMetadata(imageBuffer, metadata, imageName) {
     try {
-      const imageUpload = await this.uploadImage(imageBuffer, imageName);
-
+      const imageCid = await this.uploadImage(imageBuffer, imageName);
       const fullMetadata = {
         ...metadata,
-        image: `ipfs://${imageUpload.hash}`,
+        image: `ipfs://${imageCid}`,
       };
-
-      const metadataUpload = await this.uploadMetadata(fullMetadata);
-
-      return {
-        image: imageUpload,
-        metadata: metadataUpload,
-      };
+      const metadataCid = await this.uploadMetadata(fullMetadata);
+      return { imageCid, metadataCid };
     } catch (error) {
       console.error('Error uploading image and metadata:', error);
       throw error;

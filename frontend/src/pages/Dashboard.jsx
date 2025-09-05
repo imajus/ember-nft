@@ -42,6 +42,7 @@ export default function Dashboard() {
             name,
             symbol,
             prompt,
+            ,
             maxSupply,
             mintPrice,
           ] = result;

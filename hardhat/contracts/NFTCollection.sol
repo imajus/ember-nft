@@ -9,6 +9,7 @@ contract NFTCollection is ERC721URIStorage, ReentrancyGuard, Ownable {
     uint256 private _tokenIds;
     uint256 public maxSupply;
     string public prompt;
+    string public referenceImageUrl;
     address public creator;
     address public factory;
     uint256 public mintStartTime;
@@ -31,6 +32,7 @@ contract NFTCollection is ERC721URIStorage, ReentrancyGuard, Ownable {
         string memory name,
         string memory symbol,
         string memory _prompt,
+        string memory _referenceImageUrl,
         uint256 _maxSupply,
         address _creator,
         address _factory,
@@ -44,6 +46,7 @@ contract NFTCollection is ERC721URIStorage, ReentrancyGuard, Ownable {
         require(_payees.length > 0, "Must have at least one payee");
 
         prompt = _prompt;
+        referenceImageUrl = _referenceImageUrl;
         maxSupply = _maxSupply;
         creator = _creator;
         factory = _factory;
@@ -131,6 +134,10 @@ contract NFTCollection is ERC721URIStorage, ReentrancyGuard, Ownable {
 
     function getPrompt() external view returns (string memory) {
         return prompt;
+    }
+
+    function getReferenceImageUrl() external view returns (string memory) {
+        return referenceImageUrl;
     }
 
     function isTokenGenerated(uint256 tokenId) external view returns (bool) {

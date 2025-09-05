@@ -1,10 +1,9 @@
-import { AIImageGenerator } from './openai.js';
+import { createAIProvider } from './provider/factory.js';
 import { IPFSService } from './ipfs.js';
 import { BlockchainEventListener } from './blockchain.js';
 
 export class NFTGenerator {
   constructor() {
-    this.aiGenerator = new AIImageGenerator();
     this.ipfsService = new IPFSService();
     this.blockchainListener = new BlockchainEventListener();
   }
@@ -20,23 +19,36 @@ export class NFTGenerator {
     return existingCollections;
   }
 
-  async processTokenGeneration(collectionAddress, tokenId, prompt) {
+  async processTokenGeneration(
+    collectionAddress,
+    tokenId,
+    prompt,
+    referenceImageUrl
+  ) {
     try {
       console.log(
         `Starting generation for token ${tokenId} in collection ${collectionAddress}`
       );
       console.log(`Prompt: ${prompt}`);
-      const generatedImage = await this.aiGenerator.generateWithRetry(prompt);
+      // Unified generation - handles both text-only and reference image generation internally
+      const provider = createAIProvider();
+      const generatedImage = await provider.generateWithRetry(
+        prompt,
+        referenceImageUrl
+      );
       const imageName = `nft-${collectionAddress}-${tokenId}.png`;
       const metadata = {
         name: `Token #${tokenId}`,
         description: `Generated NFT from collection ${collectionAddress}`,
         prompt: prompt,
         revised_prompt: generatedImage.revisedPrompt,
+        reference_image_url: generatedImage.referenceImageUrl,
         attributes: [
           {
             trait_type: 'Generation Method',
-            value: 'AI Generated',
+            value: generatedImage.hasReferenceImage
+              ? 'AI Generated with Reference'
+              : 'AI Generated',
           },
           {
             trait_type: 'Model',
@@ -48,6 +60,16 @@ export class NFTGenerator {
           },
         ],
       };
+      if (generatedImage.hasReferenceImage) {
+        metadata.attributes.push({
+          trait_type: 'Has Reference Image',
+          value: 'Yes',
+        });
+        // Add style analysis if available
+        if (generatedImage.styleAnalysis) {
+          metadata.style_analysis = generatedImage.styleAnalysis;
+        }
+      }
       const upload = await this.ipfsService.uploadImageAndMetadata(
         generatedImage.buffer,
         metadata,
@@ -56,7 +78,7 @@ export class NFTGenerator {
       await this.blockchainListener.updateTokenURI(
         collectionAddress,
         tokenId,
-        upload.metadata.hash
+        upload.metadataCid
       );
       console.log(
         `✅ Successfully generated and uploaded NFT for token ${tokenId}`

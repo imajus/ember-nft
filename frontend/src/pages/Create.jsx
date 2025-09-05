@@ -4,6 +4,7 @@ import { usePrivy } from '@privy-io/react-auth';
 import { ethers } from 'ethers';
 import { getNFTCollectionFactory } from '../lib/contracts';
 import { useProvider } from '../hooks/useProvider';
+import { uploadFileToIPFS } from '../lib/ipfs';
 
 export default function Create() {
   const [formData, setFormData] = useState({
@@ -13,23 +14,62 @@ export default function Create() {
     supply: '',
     price: '',
     referenceImage: null,
+    referenceImageUrl: null,
   });
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { login } = usePrivy();
-  const { getSigner, isConnected } = useProvider();
+  const { getSigner, isConnected, connect } = useProvider();
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     if (error) setError('');
   };
 
-  const handleImageUpload = (e) => {
+  const handleImageUpload = async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      setFormData((prev) => ({ ...prev, referenceImage: file }));
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      setError('Please select a valid image file');
+      return;
+    }
+
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      setError('Image file size must be less than 10MB');
+      return;
+    }
+
+    setIsUploadingImage(true);
+    setError('');
+
+    try {
+      const uploadResult = await uploadFileToIPFS(file, {
+        name: `reference-image-${Date.now()}.${file.name.split('.').pop()}`,
+        keyvalues: {
+          type: 'reference-image',
+          collection: formData.name || 'unnamed-collection',
+        },
+      });
+
+      setFormData((prev) => ({
+        ...prev,
+        referenceImage: file,
+        referenceImageUrl: uploadResult.ipfsUrl,
+      }));
+
+      console.log('Image uploaded to IPFS:', uploadResult);
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      setError(`Failed to upload image: ${error.message}`);
+      // Reset the file input
+      e.target.value = '';
+    } finally {
+      setIsUploadingImage(false);
     }
   };
 
@@ -49,14 +89,8 @@ export default function Create() {
   };
 
   const handleSubmit = async () => {
-    if (!isConnected) {
-      login();
-      return;
-    }
-
     setIsLoading(true);
     setError('');
-
     try {
       const signer = await getSigner();
       const factory = await getNFTCollectionFactory(signer);
@@ -70,10 +104,17 @@ export default function Create() {
         formData.name,
         symbol,
         formData.prompt,
+        formData.referenceImageUrl || '', // Pass reference image URL or empty string
         parseInt(formData.supply),
         mintPrice,
         { value: creationPrice }
       );
+      if (formData.referenceImageUrl) {
+        console.log(
+          'Reference image URL passed to contract:',
+          formData.referenceImageUrl
+        );
+      }
       console.log('Transaction submitted:', transaction.hash);
       // Wait for transaction confirmation
       const receipt = await transaction.wait();
@@ -143,7 +184,6 @@ export default function Create() {
                 Short identifier for your collection (auto-generated from name)
               </p>
             </div>
-
           </div>
         );
       case 2:
@@ -172,14 +212,58 @@ export default function Create() {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Reference Image (Optional)
               </label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-              />
+              <div className="space-y-3">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  disabled={isUploadingImage}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+                />
+
+                {isUploadingImage && (
+                  <div className="flex items-center text-sm text-blue-600">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
+                    Uploading image to IPFS...
+                  </div>
+                )}
+
+                {formData.referenceImage && !isUploadingImage && (
+                  <div className="flex items-center space-x-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+                    <div className="w-12 h-12 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                      <img
+                        src={URL.createObjectURL(formData.referenceImage)}
+                        alt="Reference"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-green-800 truncate">
+                        {formData.referenceImage.name}
+                      </p>
+                      <p className="text-xs text-green-600">
+                        Uploaded to IPFS successfully
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          referenceImage: null,
+                          referenceImageUrl: null,
+                        }))
+                      }
+                      className="text-red-500 hover:text-red-700 p-1"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                )}
+              </div>
               <p className="text-sm text-gray-500 mt-2">
-                Upload a reference image to guide the AI generation style.
+                Upload a reference image to guide the AI generation style. Max
+                size: 10MB.
               </p>
             </div>
           </div>
@@ -246,6 +330,28 @@ export default function Create() {
                 <h3 className="font-semibold text-gray-800">AI Prompt</h3>
                 <p className="text-gray-600">{formData.prompt}</p>
               </div>
+              {formData.referenceImage && (
+                <div>
+                  <h3 className="font-semibold text-gray-800">
+                    Reference Image
+                  </h3>
+                  <div className="flex items-center space-x-3 mt-2">
+                    <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100">
+                      <img
+                        src={URL.createObjectURL(formData.referenceImage)}
+                        alt="Reference"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-600">
+                        {formData.referenceImage.name}
+                      </p>
+                      <p className="text-xs text-green-600">Stored on IPFS</p>
+                    </div>
+                  </div>
+                </div>
+              )}
               <div className="flex gap-8">
                 <div>
                   <h3 className="font-semibold text-gray-800">Supply</h3>
@@ -338,9 +444,7 @@ export default function Create() {
             <button
               onClick={nextStep}
               disabled={
-                (currentStep === 1 &&
-                  (!formData.name ||
-                    !formData.symbol)) ||
+                (currentStep === 1 && (!formData.name || !formData.symbol)) ||
                 (currentStep === 2 && !formData.prompt) ||
                 (currentStep === 3 && (!formData.supply || !formData.price))
               }

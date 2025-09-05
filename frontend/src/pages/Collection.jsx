@@ -16,7 +16,6 @@ export default function Collection() {
   const { login } = usePrivy();
   const { getProvider, getSigner, isConnected } = useProvider();
 
-
   useEffect(() => {
     if (collectionId) {
       loadCollectionData();
@@ -228,7 +227,10 @@ export default function Collection() {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-gray-500">Contract:</span>
-                  <AddressDisplay address={collection.contractAddress} copyable />
+                  <AddressDisplay
+                    address={collection.contractAddress}
+                    copyable
+                  />
                 </div>
               </div>
             </div>

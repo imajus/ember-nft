@@ -1,0 +1,9 @@
+name = "ember-pinata-relayer"
+main = "src/index.js"
+compatibility_date = "2025-09-04"
+
+[vars]
+PINATA_GATEWAY = "majus.mypinata.cloud"
+
+# Secrets (add via wrangler secret put PINATA_JWT):
+# PINATA_JWT = "your-pinata-jwt-token"

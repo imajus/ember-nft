@@ -21,6 +21,7 @@ contract NFTCollectionFactory is Ownable, ReentrancyGuard {
         string name;
         string symbol;
         string prompt;
+        string referenceImageUrl;
         uint256 maxSupply;
         uint256 mintPrice;
         uint256 createdAt;
@@ -36,10 +37,28 @@ contract NFTCollectionFactory is Ownable, ReentrancyGuard {
 
     constructor() Ownable(msg.sender) {}
 
+    function _createPaymentArrays(uint256 mintPrice) 
+        private 
+        view 
+        returns (address payable[] memory payees, uint256[] memory amounts) 
+    {
+        payees = new address payable[](2);
+        amounts = new uint256[](2);
+
+        uint256 platformFeeAmount = (mintPrice * PLATFORM_FEE_PERCENT) / 10000;
+        
+        payees[0] = payable(msg.sender);
+        amounts[0] = mintPrice - platformFeeAmount;
+
+        payees[1] = payable(PLATFORM_WALLET);
+        amounts[1] = platformFeeAmount + LLM_GENERATION_FEE;
+    }
+
     function createCollection(
         string memory name,
         string memory symbol,
         string memory prompt,
+        string memory referenceImageUrl,
         uint256 maxSupply,
         uint256 mintPrice
     ) external payable nonReentrant returns (uint256) {
@@ -51,25 +70,14 @@ contract NFTCollectionFactory is Ownable, ReentrancyGuard {
         require(msg.value >= LLM_GENERATION_FEE, "Insufficient payment for LLM generation");
         
         _collectionIds++;
-        uint256 newCollectionId = _collectionIds;
-
-        address payable[] memory payees = new address payable[](2);
-        uint256[] memory amounts = new uint256[](2);
-
-        uint256 platformFeeAmount = (mintPrice * PLATFORM_FEE_PERCENT) / 10000;
-        uint256 totalPlatformAmount = platformFeeAmount + LLM_GENERATION_FEE;
-        uint256 creatorAmount = mintPrice - platformFeeAmount;
-
-        payees[0] = payable(msg.sender);
-        amounts[0] = creatorAmount;
-
-        payees[1] = payable(PLATFORM_WALLET);
-        amounts[1] = totalPlatformAmount;
+        
+        (address payable[] memory payees, uint256[] memory amounts) = _createPaymentArrays(mintPrice);
 
         NFTCollection newCollection = new NFTCollection(
             name,
             symbol,
             prompt,
+            referenceImageUrl,
             maxSupply,
             msg.sender,
             address(this),
@@ -77,29 +85,27 @@ contract NFTCollectionFactory is Ownable, ReentrancyGuard {
             amounts
         );
 
-        address collectionAddress = address(newCollection);
-        collections[newCollectionId] = collectionAddress;
-        creatorCollections[msg.sender].push(newCollectionId);
+        collections[_collectionIds] = address(newCollection);
+        creatorCollections[msg.sender].push(_collectionIds);
 
-        collectionInfo[newCollectionId] = CollectionInfo({
-            id: newCollectionId,
-            contractAddress: collectionAddress,
+        collectionInfo[_collectionIds] = CollectionInfo({
+            id: _collectionIds,
+            contractAddress: address(newCollection),
             creator: msg.sender,
             name: name,
             symbol: symbol,
             prompt: prompt,
+            referenceImageUrl: referenceImageUrl,
             maxSupply: maxSupply,
-            mintPrice: creatorAmount + totalPlatformAmount,
+            mintPrice: mintPrice,
             createdAt: block.timestamp
         });
 
         payable(PLATFORM_WALLET).transfer(msg.value);
-
         newCollection.factoryMint(msg.sender);
+        emit CollectionCreated(_collectionIds, address(newCollection), msg.sender);
 
-        emit CollectionCreated(newCollectionId, collectionAddress, msg.sender);
-
-        return newCollectionId;
+        return _collectionIds;
     }
 
     function getCollectionsByCreator(

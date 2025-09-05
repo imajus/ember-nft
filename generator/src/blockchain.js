@@ -53,26 +53,41 @@ export class BlockchainEventListener {
     }
     console.log(`Token minted: ${tokenId} in collection ${collectionAddress}`);
     try {
-      // Fetch the collection's prompt since it's not in the event anymore
+      // Fetch the collection's prompt and reference image URL
       const contract = this.contracts.get(collectionAddress);
       const prompt = await contract.getPrompt();
+      const referenceImageUrl = await contract.getReferenceImageUrl();
       console.log(`Collection prompt: ${prompt}`);
-      await this.processTokenGeneration(collectionAddress, tokenId, prompt);
+      console.log(`Reference image URL: ${referenceImageUrl}`);
+      await this.processTokenGeneration(
+        collectionAddress,
+        tokenId,
+        prompt,
+        referenceImageUrl
+      );
     } catch (error) {
       console.error(`Error processing token generation:`, error);
     }
   }
 
-  async processTokenGeneration(collectionAddress, tokenId, prompt) {
+  async processTokenGeneration(
+    collectionAddress,
+    tokenId,
+    prompt,
+    referenceImageUrl
+  ) {
     console.log(
       `Processing generation for token ${tokenId} with prompt: ${prompt}`
     );
+    if (referenceImageUrl && referenceImageUrl !== '') {
+      console.log(`Using reference image: ${referenceImageUrl}`);
+    }
   }
 
   async updateTokenURI(collectionAddress, tokenId, tokenURI) {
     try {
-      const factoryContract = await getNFTFactory(this.wallet);
-      const tx = await factoryContract.updateTokenURI(
+      const contract = await getNFTFactory(this.wallet);
+      const tx = await contract.updateTokenURI(
         collectionAddress,
         tokenId,
         tokenURI

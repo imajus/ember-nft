@@ -15,15 +15,15 @@
     "deploy:test": "hardhat ignition deploy ignition/modules/NFTCollectionFactory.js",
     "deploy:local": "hardhat ignition deploy ignition/modules/NFTCollectionFactory.js --network localhost --reset && npm run build",
     "deploy:prod": "hardhat ignition deploy ignition/modules/NFTCollectionFactory.js --network somnia --reset && npm run build",
-    "verify:prod": "npx hardhat verify blockscout --network somnia --contract contracts/SmartContract.sol:SmartContract $(jq -r '.\"NFTCollectionFactoryModule#NFTCollectionFactory\"' ./ignition/deployments/chain-50312/deployed_addresses.json)"
+    "verify:prod": "hardhat verify blockscout --network somnia --contract contracts/NFTCollectionFactory.sol:NFTCollectionFactory $(jq -r '.\"NFTCollectionFactoryModule#NFTCollectionFactory\"' ./ignition/deployments/chain-50312/deployed_addresses.json)"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-ethers": "^4.0.0",
-    "@nomicfoundation/hardhat-ignition-ethers": "^3.0.0",
+    "@nomicfoundation/hardhat-ignition-ethers": "^3.0.2",
     "@nomicfoundation/hardhat-keystore": "^3.0.1",
     "@openzeppelin/contracts": "^5.4.0",
     "@solidstate/hardhat-abi-exporter": "^3.0.0",
     "dotenv": "^17.2.1",
-    "hardhat": "^3.0.1"
+    "hardhat": "^3.0.4"
   }
 }

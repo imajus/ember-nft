@@ -1,0 +1,9 @@
+# Copy this file to .dev.vars and fill in your actual values
+# DO NOT commit .dev.vars to version control
+
+# Pinata JWT token (get from https://app.pinata.cloud/developers/api-keys)
+PINATA_JWT=your_pinata_jwt_token_here
+
+# Pinata Gateway URL (get from https://app.pinata.cloud/gateway)
+# Format: your-gateway.mypinata.cloud (without https://)
+PINATA_GATEWAY=your-gateway.mypinata.cloud

@@ -50,7 +50,7 @@ export default function AddressDisplay({
   );
 
   return (
-    <div className="inline-flex items-center space-x-1">
+    <span className="inline-flex items-center space-x-1">
       {explorerUrl ? (
         <a
           href={explorerUrl}
@@ -85,7 +85,7 @@ export default function AddressDisplay({
           </svg>
         </button>
       )}
-    </div>
+    </span>
   );
 }
 

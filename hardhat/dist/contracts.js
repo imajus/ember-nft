@@ -146,6 +146,10 @@ const abis = {
           "name": "prompt"
         },
         {
+          "type": "string",
+          "name": "referenceImageUrl"
+        },
+        {
           "type": "uint256",
           "name": "maxSupply"
         },
@@ -194,6 +198,10 @@ const abis = {
         {
           "type": "string",
           "name": "prompt"
+        },
+        {
+          "type": "string",
+          "name": "referenceImageUrl"
         },
         {
           "type": "uint256",
@@ -264,6 +272,10 @@ const abis = {
             {
               "type": "string",
               "name": "prompt"
+            },
+            {
+              "type": "string",
+              "name": "referenceImageUrl"
             },
             {
               "type": "uint256",
@@ -397,6 +409,10 @@ const abis = {
         {
           "type": "string",
           "name": "_prompt"
+        },
+        {
+          "type": "string",
+          "name": "_referenceImageUrl"
         },
         {
           "type": "uint256",
@@ -842,6 +858,19 @@ const abis = {
     },
     {
       "type": "function",
+      "name": "getReferenceImageUrl",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [],
+      "outputs": [
+        {
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "type": "function",
       "name": "getTokenPrice",
       "constant": true,
       "stateMutability": "view",
@@ -1023,6 +1052,19 @@ const abis = {
     {
       "type": "function",
       "name": "prompt",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [],
+      "outputs": [
+        {
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "referenceImageUrl",
       "constant": true,
       "stateMutability": "view",
       "payable": false,
@@ -2021,11 +2063,8 @@ const abis = {
 };
 
 const deployments = {
-  "31337": {
-    "NFTCollectionFactoryModule#NFTCollectionFactory": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
-  },
   "50312": {
-    "NFTCollectionFactoryModule#NFTCollectionFactory": "0x7e18d4F5d20E27b6750F79FD3Fe34001Dd2D8534"
+    "NFTCollectionFactoryModule#NFTCollectionFactory": "0x1999f0658Be4c80f967955418e05270c4fef15b9"
   }
 };
 

@@ -16,6 +16,10 @@
         "name": "_prompt"
       },
       {
+        "type": "string",
+        "name": "_referenceImageUrl"
+      },
+      {
         "type": "uint256",
         "name": "_maxSupply"
       },
@@ -459,6 +463,19 @@
   },
   {
     "type": "function",
+    "name": "getReferenceImageUrl",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "type": "function",
     "name": "getTokenPrice",
     "constant": true,
     "stateMutability": "view",
@@ -640,6 +657,19 @@
   {
     "type": "function",
     "name": "prompt",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "string"
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "referenceImageUrl",
     "constant": true,
     "stateMutability": "view",
     "payable": false,
