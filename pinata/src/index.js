@@ -83,9 +83,18 @@ async function handleGetFile(hash, env, corsHeaders) {
 
   try {
     const gatewayUrl = `https://${env.PINATA_GATEWAY}/ipfs/${hash}`;
-    const response = await fetch(gatewayUrl, {
+    let response = await fetch(gatewayUrl, {
       headers: {
         Authorization: `Bearer ${env.PINATA_JWT}`,
+      },
+      cf: {
+        cacheEverything: true,
+        cacheTtl: 31536000,
+        cacheTtlByStatus: {
+          '200-299': 31536000,
+          404: 300,
+          '500-599': 0,
+        },
       },
     });
 
@@ -104,21 +113,22 @@ async function handleGetFile(hash, env, corsHeaders) {
       );
     }
 
-    const responseHeaders = new Headers();
+    response = new Response(response.body, response);
 
+    const responseHeaders = new Headers();
     response.headers.forEach((value, key) => {
       if (
         key.toLowerCase() === 'content-type' ||
         key.toLowerCase() === 'content-length' ||
         key.toLowerCase() === 'content-disposition' ||
         key.toLowerCase() === 'etag' ||
-        key.toLowerCase() === 'last-modified' ||
-        key.toLowerCase() === 'cache-control'
+        key.toLowerCase() === 'last-modified'
       ) {
         responseHeaders.set(key, value);
       }
     });
 
+    responseHeaders.set('Cache-Control', 'public, max-age=31536000, immutable');
     Object.entries(corsHeaders).forEach(([key, value]) => {
       responseHeaders.set(key, value);
     });
