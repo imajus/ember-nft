@@ -32,11 +32,9 @@ export async function fetchTokenMetadata(tokenURI) {
   try {
     const httpUrl = convertIpfsToHttp(tokenURI);
     const response = await fetch(httpUrl);
-
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-
     const metadata = await response.json();
     return metadata;
   } catch (error) {
