@@ -26,11 +26,13 @@ No additional dependencies needed - the Worker uses only native fetch APIs!
 ### 2. Configure Environment Variables
 
 1. Copy the example environment file:
+
 ```bash
 cp .dev.vars.example .dev.vars
 ```
 
 2. Fill in your Pinata credentials in `.dev.vars`:
+
 ```env
 PINATA_JWT=your_pinata_jwt_token_here
 PINATA_GATEWAY=your-gateway.mypinata.cloud
@@ -44,7 +46,6 @@ For production deployment, set the secrets using Wrangler:
 
 ```bash
 wrangler secret put PINATA_JWT
-wrangler secret put PINATA_GATEWAY
 ```
 
 ### 4. Deploy
@@ -60,19 +61,22 @@ wrangler deploy
 Streams a file directly from Pinata gateway by IPFS hash. Returns the raw file with original headers and content-type.
 
 **Request:**
+
 ```http
 GET /bafkreib4pqtikzdjlj4zigobmd63lig7u6oxlug24snlr6atjlmlza45dq
 ```
 
 **Response:**
 Returns the raw file content with original content-type headers. For example:
+
 - Images: `Content-Type: image/png` with binary image data
 - JSON: `Content-Type: application/json` with JSON content
 - Text: `Content-Type: text/plain` with text content
 
 **Error Responses:**
+
 - `400 Bad Request`: "Invalid IPFS hash format" (text/plain)
-- `404 Not Found`: "File not found on IPFS" (text/plain) 
+- `404 Not Found`: "File not found on IPFS" (text/plain)
 - `500 Internal Server Error`: "Internal server error" (text/plain)
 
 ### POST /upload
@@ -80,6 +84,7 @@ Returns the raw file content with original content-type headers. For example:
 Creates a presigned upload URL for client-side file uploads using the Pinata HTTP API.
 
 **Request:**
+
 ```http
 POST /upload
 Content-Type: application/json
@@ -97,6 +102,7 @@ Content-Type: application/json
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -130,17 +136,20 @@ This will start a local development server at `http://localhost:8787`.
 ### Testing the Endpoints
 
 Test file retrieval (streams file directly):
+
 ```bash
 curl https://your-worker.your-subdomain.workers.dev/QmYourIPFSHash
 # Returns raw file content with original headers
 ```
 
 Test file retrieval with output to file:
+
 ```bash
 curl https://your-worker.your-subdomain.workers.dev/QmYourIPFSHash -o downloaded-file.png
 ```
 
 Test upload URL creation:
+
 ```bash
 curl -X POST https://your-worker.your-subdomain.workers.dev/upload \
   -H "Content-Type: application/json" \
@@ -156,7 +165,7 @@ Once you get the presigned URL, you can upload files directly:
 const response = await fetch('/upload', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ expires: 1800 })
+  body: JSON.stringify({ expires: 1800 }),
 });
 const { uploadUrl } = await response.json();
 
@@ -164,19 +173,21 @@ const { uploadUrl } = await response.json();
 const file = new File(['content'], 'test.txt', { type: 'text/plain' });
 const uploadResponse = await fetch(uploadUrl, {
   method: 'POST',
-  body: file
+  body: file,
 });
 ```
 
 ### Architecture Benefits
 
 **GET Endpoint (Direct Streaming):**
+
 - Zero processing overhead - files stream directly from Pinata gateway
-- Preserves original content-type and headers  
+- Preserves original content-type and headers
 - Optimal performance for large files
 - No memory usage for file buffering
 
 **POST Endpoint (Pinata SDK):**
+
 - Reliable presigned URL generation
 - Rich configuration options (file size, MIME types, metadata)
 - Built-in error handling and validation
@@ -187,6 +198,7 @@ const uploadResponse = await fetch(uploadUrl, {
 This Worker uses **direct HTTP API calls** for optimal performance and minimal overhead:
 
 ### GET Endpoint - Direct Streaming
+
 - Makes direct HTTP calls to Pinata gateway
 - Streams `response.body` directly to client (no memory buffering)
 - Preserves original content-type and headers
@@ -194,6 +206,7 @@ This Worker uses **direct HTTP API calls** for optimal performance and minimal o
 - Minimal latency and processing overhead
 
 ### POST Endpoint - Direct API Calls
+
 - Makes direct HTTP calls to Pinata's presigned URL API
 - Zero dependencies and minimal bundle size
 - Native error handling with proper HTTP status codes
@@ -223,6 +236,7 @@ The API returns standardized error responses:
 ```
 
 Common error codes:
+
 - `400` - Bad request (invalid parameters)
 - `404` - File not found
 - `500` - Internal server error

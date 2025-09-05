@@ -1,7 +1,6 @@
 import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { usePrivy } from '@privy-io/react-auth';
 import { getNFTCollection, getNFTCollectionFactory } from '../lib/contracts';
 import { useProvider } from '../hooks/useProvider';
 import CollectionCover from '../components/CollectionCover';
@@ -13,8 +12,7 @@ export default function Collection() {
   const [collection, setCollection] = useState(null);
   const [loadingState, setLoadingState] = useState('not-loaded');
   const [collectionContract, setCollectionContract] = useState(null);
-  const { login } = usePrivy();
-  const { getProvider, getSigner, isConnected } = useProvider();
+  const { getProvider, getSigner, isConnected, connect } = useProvider();
 
   useEffect(() => {
     if (collectionId) {
@@ -126,7 +124,7 @@ export default function Collection() {
 
   async function mintNft() {
     if (!isConnected) {
-      login();
+      connect();
       return;
     }
     if (!collection) return;

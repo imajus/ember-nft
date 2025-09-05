@@ -21,6 +21,11 @@ export class IPFSService {
     });
   }
 
+  async downloadPrivateFile(ipfsUrl) {
+    const cid = ipfsUrl.replace(/^ipfs:\/\//, '');
+    return this.pinata.gateways.private.get(cid);
+  }
+
   async uploadImage(imageBuffer, filename) {
     try {
       const file = new File([imageBuffer], filename, { type: 'image/png' });

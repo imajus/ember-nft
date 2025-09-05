@@ -4,7 +4,7 @@ import { useProvider } from '../hooks/useProvider';
 import { fetchTokenMetadata, getImageFromMetadata } from '../lib/ipfs';
 import AddressDisplay from './AddressDisplay';
 
-export default function TokenCard({ tokenId, collection, onTokenUpdate }) {
+export default function TokenCard({ tokenId, collection }) {
   const [token, setToken] = useState({
     tokenId,
     owner: null,
@@ -78,10 +78,6 @@ export default function TokenCard({ tokenId, collection, onTokenUpdate }) {
         isLoading: false,
       };
       setToken(tokenData);
-      // Notify parent component of token data
-      if (onTokenUpdate) {
-        onTokenUpdate(tokenData);
-      }
     } catch (error) {
       console.error(`Error loading token ${tokenId}:`, error);
       setToken((prev) => ({
@@ -109,7 +105,7 @@ export default function TokenCard({ tokenId, collection, onTokenUpdate }) {
             `Error fetching metadata for token ${tokenId}:`,
             metadataError
           );
-          imageUrl = '/error.gif'; //convertIpfsToHttp(newTokenURI);
+          imageUrl = '/error.gif';
         }
         const updatedToken = {
           ...token,
@@ -119,10 +115,6 @@ export default function TokenCard({ tokenId, collection, onTokenUpdate }) {
           ...(tokenName && { name: tokenName }),
         };
         setToken(updatedToken);
-        // Notify parent component of token update
-        if (onTokenUpdate) {
-          onTokenUpdate(updatedToken);
-        }
         console.log(`Updated token ${tokenId} image: ${imageUrl}`);
       } catch (error) {
         console.error(`Error updating token ${tokenId} image:`, error);
@@ -134,16 +126,21 @@ export default function TokenCard({ tokenId, collection, onTokenUpdate }) {
   function setupEventListeners() {
     try {
       // Listen for TokenURIUpdated events for this specific token
-      const filter = collectionContract.filters.TokenURIUpdated();
-      collectionContract.on(filter, (tokenIdFromEvent, newTokenURI, event) => {
-        if (parseInt(tokenIdFromEvent.toString()) === tokenId) {
-          console.log(`TokenURIUpdated event detected for token ${tokenId}:`, {
-            tokenId: tokenIdFromEvent.toString(),
-            newTokenURI,
-          });
-          updateTokenImage(newTokenURI);
+      collectionContract.on(
+        'TokenURIUpdated',
+        (tokenIdFromEvent, newTokenURI) => {
+          if (parseInt(tokenIdFromEvent.toString()) === tokenId) {
+            console.log(
+              `TokenURIUpdated event detected for token ${tokenId}:`,
+              {
+                tokenId: tokenIdFromEvent.toString(),
+                newTokenURI,
+              }
+            );
+            updateTokenImage(`ipfs://${newTokenURI}`);
+          }
         }
-      });
+      );
       console.log(`Event listeners set up for token ${tokenId}`);
     } catch (error) {
       console.error(
