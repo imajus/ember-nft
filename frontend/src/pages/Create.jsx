@@ -208,7 +208,7 @@ export default function Create() {
                 in your collection.
               </p>
             </div>
-            <div>
+            {/* <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Reference Image (Optional)
               </label>
@@ -265,7 +265,7 @@ export default function Create() {
                 Upload a reference image to guide the AI generation style. Max
                 size: 10MB.
               </p>
-            </div>
+            </div> */}
           </div>
         );
       case 3:
