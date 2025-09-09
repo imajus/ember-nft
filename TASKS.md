@@ -62,6 +62,37 @@
 - [x] Implement updating NFT metadata using `updateTokenURI()` function from `NFTCollection` smart contract
 - [x] Create `generator/README.md` file
 
+### Smart Contract Forking Implementation
+
+- [ ] Add parentCollection parameter to NFTCollection.sol constructor
+- [ ] Implement forkCollection function in NFTCollectionFactory.sol
+- [ ] Create \_calculateLineageFees function for revenue distribution
+- [ ] Add getCollectionLineage function to traverse fork hierarchy
+- [ ] Update CollectionInfo struct to include parent collection reference
+- [ ] Write comprehensive tests for forking functionality
+- [ ] Test lineage fee distribution with multiple fork levels
+- [ ] Deploy updated contracts to testnet
+
+### Generator Service Forking Updates
+
+- [ ] Enhance blockchain listener to detect fork events
+- [ ] Implement getCollectionLineage function in generator service
+- [ ] Create composePromptFromLineage function for prompt concatenation
+- [ ] Update processTokenMinted to handle forked collections
+- [ ] Test composite prompt generation with multiple fork levels
+- [ ] Add error handling for lineage traversal failures
+
+### Frontend Forking Integration
+
+- [ ] Add "Fork" button to collection browse cards
+- [ ] Create fork creation wizard with parent collection display
+- [ ] Update collection creation flow to support forking
+- [ ] Display parent collection info during fork creation steps
+- [ ] Add fork count display to collection cards
+- [ ] Show parent collection reference on collection detail pages
+- [ ] Add "Fork this collection" button to collection detail pages
+- [ ] Update collection browse to show fork indicators
+
 ## Phase 2: User Experience
 
 ### Frontend Enhancements
@@ -75,6 +106,8 @@
 - [ ] Implement notification system
 - [ ] Add mobile responsive design
 - [ ] Build progressive web app features
+- [ ] Build fork hierarchy visualization (stretch goal)
+- [ ] Add advanced fork analytics and statistics
 
 ### Smart Contract Enhancements
 
@@ -85,6 +118,7 @@
 - [ ] Implement emergency pause functionality
 - [ ] Create upgrade proxy pattern
 - [ ] Add gas optimization improvements
+- [ ] Optimize lineage fee calculation for deep fork hierarchies
 
 ### Backend Enhancements
 
@@ -249,11 +283,19 @@
 ### MVP (Minimum Viable Product)
 
 1. ✅ Basic smart contracts (collection, minting)
-2. Event listener service
-3. AI generation integration
-4. IPFS storage
-5. Basic frontend (create, browse, mint)
-6. Wallet integration
+2. ✅ Event listener service
+3. ✅ AI generation integration
+4. ✅ IPFS storage
+5. ✅ Basic frontend (create, browse, mint)
+6. ✅ Wallet integration
+
+### Enhanced MVP (with Forking)
+
+1. NFT collection forking smart contracts
+2. Lineage tracking and revenue distribution
+3. Composite prompt generation for forks
+4. Fork creation UI and workflow
+5. Parent/child collection relationships display
 
 ### Beta Release
 
@@ -263,6 +305,7 @@
 4. Enhanced UI/UX
 5. Basic analytics
 6. Testing suite
+7. Advanced fork analytics and visualization
 
 ### Production Release
 
@@ -272,6 +315,7 @@
 4. Documentation
 5. Support system
 6. Marketing tools
+7. Fork hierarchy optimization for gas efficiency
 
 ## Notes
 
