@@ -1,5 +1,12 @@
 import PropTypes from 'prop-types';
-import { somniaTestnet } from '../lib/privy';
+
+const SOMNIA_TESTNET = {
+  blockExplorers: {
+    default: {
+      url: 'https://somnia-testnet.socialscan.io',
+    },
+  },
+};
 
 /**
  * @typedef {Object} AddressDisplayProps
@@ -20,7 +27,7 @@ export default function AddressDisplay({
   if (!address) return null;
 
   // Always use Somnia Testnet since it's the only supported network
-  const network = somniaTestnet;
+  const network = SOMNIA_TESTNET;
 
   const formatAddress = (addr) => {
     if (!addr || addr.length < 10) return addr;

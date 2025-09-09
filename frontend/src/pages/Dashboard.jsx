@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { usePrivy } from '@privy-io/react-auth';
 import { ethers } from 'ethers';
 import { getNFTCollectionFactory, getNFTCollection } from '../lib/contracts';
 import { useProvider } from '../hooks/useProvider';
@@ -16,8 +15,7 @@ export default function Dashboard() {
     totalSupply: 0,
   });
 
-  const { login } = usePrivy();
-  const { isConnected, address, getProvider } = useProvider();
+  const { isConnected, address, getProvider, connect } = useProvider();
 
   useEffect(() => {
     if (isConnected && address) {
@@ -104,7 +102,7 @@ export default function Dashboard() {
           Connect your wallet to view your collections
         </p>
         <button
-          onClick={() => login()}
+          onClick={() => connect()}
           className="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:shadow-lg transition-all duration-200"
         >
           Connect Wallet

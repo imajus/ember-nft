@@ -1,25 +1,12 @@
 import { Link } from 'react-router-dom';
-import { usePrivy } from '@privy-io/react-auth';
+import { useWeb3 } from '../context/Web3Context';
 
 export default function Navigation() {
-  const { ready, authenticated, user, login, logout } = usePrivy();
+  const { isConnected, address, isLoading, connect, disconnect, error } = useWeb3();
 
   const formatAddress = (address) => {
     if (!address) return '';
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
-  };
-
-  const getUserDisplayName = () => {
-    if (user?.email?.address) {
-      return user.email.address;
-    }
-    if (user?.phone?.number) {
-      return user.phone.number;
-    }
-    if (user?.wallet?.address) {
-      return formatAddress(user.wallet.address);
-    }
-    return 'User';
   };
 
   return (
@@ -53,27 +40,33 @@ export default function Navigation() {
           </Link>
         </div>
         <div className="flex items-center">
-          {!ready ? (
-            <div className="text-white">Loading...</div>
-          ) : authenticated ? (
+          {isLoading ? (
+            <div className="text-white">Connecting...</div>
+          ) : isConnected ? (
             <div className="flex items-center space-x-4">
               <span className="text-white text-sm">
-                Welcome, {getUserDisplayName()}
+                {formatAddress(address)}
               </span>
               <button
-                onClick={logout}
+                onClick={disconnect}
                 className="bg-white text-purple-600 px-4 py-2 rounded-md font-medium hover:bg-purple-50 transition-colors"
               >
-                Logout
+                Disconnect
               </button>
             </div>
           ) : (
-            <button
-              onClick={login}
-              className="bg-white text-purple-600 px-4 py-2 rounded-md font-medium hover:bg-purple-50 transition-colors"
-            >
-              Connect Wallet
-            </button>
+            <div className="flex flex-col items-end">
+              <button
+                onClick={connect}
+                disabled={isLoading}
+                className="bg-white text-purple-600 px-4 py-2 rounded-md font-medium hover:bg-purple-50 transition-colors disabled:opacity-50"
+              >
+                Connect Wallet
+              </button>
+              {error && (
+                <p className="text-red-200 text-xs mt-1">{error}</p>
+              )}
+            </div>
           )}
         </div>
       </div>

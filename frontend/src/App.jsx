@@ -1,23 +1,16 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import { PrivyProvider } from '@privy-io/react-auth'
+import { Web3Provider } from './context/Web3Context'
 import Navigation from './components/Navigation'
 import Home from './pages/Home'
 import Explore from './pages/Explore'
 import Create from './pages/Create'
 import Dashboard from './pages/Dashboard'
 import Collection from './pages/Collection'
-import { privyConfig } from './lib/privy'
 import './styles/globals.css'
 
 function App() {
-  const appId = import.meta.env.VITE_PRIVY_APP_ID
-
-  if (!appId) {
-    return <div>Please set VITE_PRIVY_APP_ID in your .env file</div>
-  }
-
   return (
-    <PrivyProvider appId={appId} config={privyConfig}>
+    <Web3Provider>
       <Router>
         <div className="min-h-screen bg-gray-50">
           <Navigation />
@@ -30,7 +23,7 @@ function App() {
           </Routes>
         </div>
       </Router>
-    </PrivyProvider>
+    </Web3Provider>
   )
 }
 

@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
-import { usePrivy } from '@privy-io/react-auth';
+import { useWeb3 } from '../context/Web3Context';
 
 export default function Home() {
-  const { login } = usePrivy();
+  const { connect } = useWeb3();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50">
@@ -64,7 +64,7 @@ export default function Home() {
             Join creators who are already building the future of AI-generated NFTs
           </p>
           <button
-            onClick={() => login()}
+            onClick={() => connect()}
             className="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:shadow-lg transition-all duration-200 transform hover:scale-105"
           >
             Connect Wallet to Get Started

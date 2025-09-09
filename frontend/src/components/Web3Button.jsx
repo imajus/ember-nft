@@ -1,24 +1,31 @@
 import { useProvider } from '../hooks/useProvider';
+import PropTypes from 'prop-types';
 
 export default function Web3Button({ 
   onClick, 
   children, 
   disabled = false, 
   className = '',
-  connectText = 'Connect',
+  connectText = 'Connect Wallet',
   ...props 
 }) {
-  const { isConnected, connect } = useProvider();
+  const { isConnected, isLoading, connect, error } = useProvider();
 
   if (!isConnected) {
     return (
-      <button
-        onClick={connect}
-        className={className}
-        {...props}
-      >
-        {connectText}
-      </button>
+      <div>
+        <button
+          onClick={connect}
+          disabled={isLoading}
+          className={className}
+          {...props}
+        >
+          {isLoading ? 'Connecting...' : connectText}
+        </button>
+        {error && (
+          <p className="text-red-500 text-sm mt-2">{error}</p>
+        )}
+      </div>
     );
   }
 
@@ -33,3 +40,11 @@ export default function Web3Button({
     </button>
   );
 }
+
+Web3Button.propTypes = {
+  onClick: PropTypes.func,
+  children: PropTypes.node,
+  disabled: PropTypes.bool,
+  className: PropTypes.string,
+  connectText: PropTypes.string,
+};
