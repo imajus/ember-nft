@@ -12,6 +12,7 @@ contract NFTCollection is ERC721URIStorage, ReentrancyGuard, Ownable {
     string public referenceImageUrl;
     address public creator;
     address public factory;
+    address public parent;
     uint256 public mintStartTime;
     uint256 public mintEndTime;
 
@@ -36,6 +37,7 @@ contract NFTCollection is ERC721URIStorage, ReentrancyGuard, Ownable {
         uint256 _maxSupply,
         address _creator,
         address _factory,
+        address _parent,
         address payable[] memory _payees,
         uint256[] memory _amounts
     ) ERC721(name, symbol) Ownable(_creator) {
@@ -50,6 +52,7 @@ contract NFTCollection is ERC721URIStorage, ReentrancyGuard, Ownable {
         maxSupply = _maxSupply;
         creator = _creator;
         factory = _factory;
+        parent = _parent;
         mintStartTime = block.timestamp;
         mintEndTime = block.timestamp + 30 days;
 
@@ -138,6 +141,10 @@ contract NFTCollection is ERC721URIStorage, ReentrancyGuard, Ownable {
 
     function getReferenceImageUrl() external view returns (string memory) {
         return referenceImageUrl;
+    }
+
+    function getParent() external view returns (address) {
+        return parent;
     }
 
     function isTokenGenerated(uint256 tokenId) external view returns (bool) {

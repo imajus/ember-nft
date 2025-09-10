@@ -50,6 +50,11 @@ const abis = {
           "type": "address",
           "name": "creator",
           "indexed": true
+        },
+        {
+          "type": "address",
+          "name": "parent",
+          "indexed": false
         }
       ]
     },
@@ -160,6 +165,10 @@ const abis = {
         {
           "type": "uint256",
           "name": "createdAt"
+        },
+        {
+          "type": "uint256",
+          "name": "parentId"
         }
       ]
     },
@@ -210,6 +219,10 @@ const abis = {
         {
           "type": "uint256",
           "name": "mintPrice"
+        },
+        {
+          "type": "uint256",
+          "name": "parentId"
         }
       ],
       "outputs": [
@@ -288,8 +301,31 @@ const abis = {
             {
               "type": "uint256",
               "name": "createdAt"
+            },
+            {
+              "type": "uint256",
+              "name": "parentId"
             }
           ]
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "getCollectionLineage",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [
+        {
+          "type": "address",
+          "name": "collectionAddress"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "address[]",
+          "name": "lineage"
         }
       ]
     },
@@ -425,6 +461,10 @@ const abis = {
         {
           "type": "address",
           "name": "_factory"
+        },
+        {
+          "type": "address",
+          "name": "_parent"
         },
         {
           "type": "address[]",
@@ -845,6 +885,19 @@ const abis = {
     },
     {
       "type": "function",
+      "name": "getParent",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [],
+      "outputs": [
+        {
+          "type": "address"
+        }
+      ]
+    },
+    {
+      "type": "function",
       "name": "getPrompt",
       "constant": true,
       "stateMutability": "view",
@@ -1026,6 +1079,19 @@ const abis = {
           "name": "tokenId"
         }
       ],
+      "outputs": [
+        {
+          "type": "address"
+        }
+      ]
+    },
+    {
+      "type": "function",
+      "name": "parent",
+      "constant": true,
+      "stateMutability": "view",
+      "payable": false,
+      "inputs": [],
       "outputs": [
         {
           "type": "address"
@@ -2064,7 +2130,7 @@ const abis = {
 
 const deployments = {
   "50312": {
-    "NFTCollectionFactoryModule#NFTCollectionFactory": "0x1999f0658Be4c80f967955418e05270c4fef15b9"
+    "NFTCollectionFactoryModule#NFTCollectionFactory": "0xF1757492Ec2A750769729ac94cB6DF95478a3219"
   }
 };
 

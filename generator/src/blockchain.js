@@ -57,12 +57,31 @@ export class BlockchainEventListener {
       const contract = this.contracts.get(collectionAddress);
       const prompt = await contract.getPrompt();
       const referenceImageUrl = await contract.getReferenceImageUrl();
+      
+      // Check if this is a forked collection and compose prompt from lineage
+      const parentAddress = await contract.getParent();
+      let finalPrompt = prompt;
+      
+      if (parentAddress && parentAddress !== ethers.ZeroAddress) {
+        console.log(`Collection ${collectionAddress} is a fork of ${parentAddress}`);
+        try {
+          const compositePrompt = await this.composePromptFromLineage(collectionAddress);
+          if (compositePrompt) {
+            finalPrompt = compositePrompt;
+            console.log(`Using composite prompt: ${finalPrompt}`);
+          }
+        } catch (error) {
+          console.error(`Error composing prompt from lineage, using original:`, error);
+        }
+      }
+      
       console.log(`Collection prompt: ${prompt}`);
+      console.log(`Final prompt: ${finalPrompt}`);
       console.log(`Reference image URL: ${referenceImageUrl}`);
       await this.processTokenGeneration(
         collectionAddress,
         tokenId,
-        prompt,
+        finalPrompt,
         referenceImageUrl
       );
     } catch (error) {
@@ -103,8 +122,12 @@ export class BlockchainEventListener {
 
   async listenToFactoryEvents() {
     const factoryContract = await getNFTFactory(this.provider);
-    factoryContract.on('CollectionCreated', (id, collectionAddress) => {
-      console.log(`New collection created: ${collectionAddress}`);
+    factoryContract.on('CollectionCreated', (id, collectionAddress, creator, parent, event) => {
+      const parentStr = parent === ethers.ZeroAddress ? 'None' : parent;
+      console.log(`New collection created: ${collectionAddress}, Creator: ${creator}, Parent: ${parentStr}`);
+      if (parent !== ethers.ZeroAddress) {
+        console.log(`This is a fork of collection: ${parent}`);
+      }
       this.addCollectionContract(collectionAddress);
     });
     const factoryAddress = await factoryContract.getAddress();
@@ -126,6 +149,65 @@ export class BlockchainEventListener {
     } catch (error) {
       console.error('Error loading existing collections:', error);
       return [];
+    }
+  }
+
+  async getCollectionLineage(collectionAddress) {
+    try {
+      const factoryContract = await getNFTFactory(this.provider);
+      const lineage = await factoryContract.getCollectionLineage(collectionAddress);
+      console.log(`Lineage for ${collectionAddress}:`, lineage.map(addr => addr.toString()));
+      return lineage;
+    } catch (error) {
+      console.error(`Error getting collection lineage for ${collectionAddress}:`, error);
+      throw error;
+    }
+  }
+
+  async composePromptFromLineage(collectionAddress) {
+    try {
+      // Get the current collection's prompt
+      const currentContract = this.contracts.get(collectionAddress);
+      const currentPrompt = await currentContract.getPrompt();
+      
+      // Get the lineage (parent collections)
+      const lineage = await this.getCollectionLineage(collectionAddress);
+      
+      if (lineage.length === 0) {
+        return currentPrompt; // No parents, return current prompt
+      }
+      
+      // Fetch prompts from all ancestor collections (from original to immediate parent)
+      const ancestorPrompts = [];
+      
+      // Process lineage in reverse order (original creator first)
+      for (let i = lineage.length - 1; i >= 0; i--) {
+        const ancestorAddress = lineage[i];
+        try {
+          // Get or create contract for ancestor
+          let ancestorContract = this.contracts.get(ancestorAddress);
+          if (!ancestorContract) {
+            ancestorContract = await getNFTCollection(ancestorAddress, this.provider);
+          }
+          const ancestorPrompt = await ancestorContract.getPrompt();
+          ancestorPrompts.push(ancestorPrompt);
+          console.log(`Ancestor ${i} (${ancestorAddress}): ${ancestorPrompt}`);
+        } catch (error) {
+          console.error(`Error fetching prompt from ancestor ${ancestorAddress}:`, error);
+          // Continue with other ancestors even if one fails
+        }
+      }
+      
+      // Compose final prompt: original + fork1 + fork2 + ... + current
+      const allPrompts = [...ancestorPrompts, currentPrompt];
+      const compositePrompt = allPrompts.join(' + ');
+      
+      console.log(`Composite prompt composed from ${allPrompts.length} collections: ${compositePrompt}`);
+      return compositePrompt;
+      
+    } catch (error) {
+      console.error(`Error composing prompt from lineage for ${collectionAddress}:`, error);
+      throw error;
     }
   }
 

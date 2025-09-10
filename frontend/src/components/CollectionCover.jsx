@@ -18,7 +18,6 @@ export default function CollectionCover({
   const { getProvider } = useProvider();
   const [coverImage, setCoverImage] = useState(DEFAULT_COVER_IMAGE);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (contractAddress) {
@@ -34,7 +33,6 @@ export default function CollectionCover({
     }
     try {
       setIsLoading(true);
-      setError(null);
       const contract = await getNFTCollection(contractAddress, getProvider());
       const supply = await contract.getCurrentSupply();
       if (supply === 0) {
@@ -66,7 +64,6 @@ export default function CollectionCover({
       setIsLoading(false);
     } catch (err) {
       console.error('Error fetching collection cover:', err);
-      setError(err.message || 'Failed to load collection cover');
       setCoverImage(DEFAULT_COVER_IMAGE);
       setIsLoading(false);
     }

@@ -41,6 +41,7 @@ export default function Explore() {
                 creator: collection.creator,
                 prompt: collection.prompt,
                 createdAt: collection.createdAt.toString(),
+                parentId: collection.parentId.toString(),
               };
             } catch (error) {
               console.error(

@@ -32,6 +32,10 @@
         "name": "_factory"
       },
       {
+        "type": "address",
+        "name": "_parent"
+      },
+      {
         "type": "address[]",
         "name": "_payees"
       },
@@ -450,6 +454,19 @@
   },
   {
     "type": "function",
+    "name": "getParent",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
+    "outputs": [
+      {
+        "type": "address"
+      }
+    ]
+  },
+  {
+    "type": "function",
     "name": "getPrompt",
     "constant": true,
     "stateMutability": "view",
@@ -631,6 +648,19 @@
         "name": "tokenId"
       }
     ],
+    "outputs": [
+      {
+        "type": "address"
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "name": "parent",
+    "constant": true,
+    "stateMutability": "view",
+    "payable": false,
+    "inputs": [],
     "outputs": [
       {
         "type": "address"

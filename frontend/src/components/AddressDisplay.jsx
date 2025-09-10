@@ -1,5 +1,3 @@
-import PropTypes from 'prop-types';
-
 const SOMNIA_TESTNET = {
   blockExplorers: {
     default: {
@@ -95,9 +93,3 @@ export default function AddressDisplay({
     </span>
   );
 }
-
-AddressDisplay.propTypes = {
-  address: PropTypes.string.isRequired,
-  className: PropTypes.string,
-  copyable: PropTypes.bool,
-};

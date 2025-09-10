@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { ethers } from 'ethers';
-import PropTypes from 'prop-types';
 
 const Web3Context = createContext();
 
@@ -160,10 +159,6 @@ export function Web3Provider({ children }) {
 
   return <Web3Context.Provider value={value}>{children}</Web3Context.Provider>;
 }
-
-Web3Provider.propTypes = {
-  children: PropTypes.node.isRequired,
-};
 
 export function useWeb3() {
   const context = useContext(Web3Context);

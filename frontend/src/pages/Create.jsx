@@ -1,10 +1,11 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ethers } from 'ethers';
 import { getNFTCollectionFactory } from '../lib/contracts';
 import { useProvider } from '../hooks/useProvider';
-import { uploadFileToIPFS } from '../lib/ipfs';
+// import { uploadFileToIPFS } from '../lib/ipfs';
 import Web3Button from '../components/Web3Button';
+import CollectionCover from '../components/CollectionCover';
 
 export default function Create() {
   const [formData, setFormData] = useState({
@@ -18,60 +19,94 @@ export default function Create() {
   });
   const [currentStep, setCurrentStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  // const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [error, setError] = useState('');
+  const [parentCollection, setParentCollection] = useState(null);
+  const [isForking, setIsForking] = useState(false);
   const navigate = useNavigate();
-  const { getSigner } = useProvider();
+  const location = useLocation();
+  const { getSigner, getProvider } = useProvider();
+
+  // Check if this is a fork creation from URL params
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const forkFromId = urlParams.get('forkFrom');
+
+    if (forkFromId) {
+      setIsForking(true);
+      loadParentCollection(forkFromId);
+    }
+  }, [location.search]);
+
+  const loadParentCollection = async (parentId) => {
+    try {
+      const provider = getProvider();
+      const factory = await getNFTCollectionFactory(provider);
+      const parentInfo = await factory.collectionInfo(parentId);
+
+      setParentCollection({
+        id: parentId,
+        name: parentInfo.name,
+        symbol: parentInfo.symbol,
+        prompt: parentInfo.prompt,
+        contractAddress: parentInfo.contractAddress,
+        creator: parentInfo.creator,
+      });
+    } catch (error) {
+      console.error('Error loading parent collection:', error);
+      setError('Failed to load parent collection information');
+    }
+  };
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     if (error) setError('');
   };
 
-  const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+  // const handleImageUpload = async (e) => {
+  //   const file = e.target.files[0];
+  //   if (!file) return;
 
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      setError('Please select a valid image file');
-      return;
-    }
+  //   // Validate file type
+  //   if (!file.type.startsWith('image/')) {
+  //     setError('Please select a valid image file');
+  //     return;
+  //   }
 
-    // Validate file size (max 10MB)
-    if (file.size > 10 * 1024 * 1024) {
-      setError('Image file size must be less than 10MB');
-      return;
-    }
+  //   // Validate file size (max 10MB)
+  //   if (file.size > 10 * 1024 * 1024) {
+  //     setError('Image file size must be less than 10MB');
+  //     return;
+  //   }
 
-    setIsUploadingImage(true);
-    setError('');
+  //   setIsUploadingImage(true);
+  //   setError('');
 
-    try {
-      const uploadResult = await uploadFileToIPFS(file, {
-        name: `reference-image-${Date.now()}.${file.name.split('.').pop()}`,
-        keyvalues: {
-          type: 'reference-image',
-          collection: formData.name || 'unnamed-collection',
-        },
-      });
+  //   try {
+  //     const uploadResult = await uploadFileToIPFS(file, {
+  //       name: `reference-image-${Date.now()}.${file.name.split('.').pop()}`,
+  //       keyvalues: {
+  //         type: 'reference-image',
+  //         collection: formData.name || 'unnamed-collection',
+  //       },
+  //     });
 
-      setFormData((prev) => ({
-        ...prev,
-        referenceImage: file,
-        referenceImageUrl: uploadResult.ipfsUrl,
-      }));
+  //     setFormData((prev) => ({
+  //       ...prev,
+  //       referenceImage: file,
+  //       referenceImageUrl: uploadResult.ipfsUrl,
+  //     }));
 
-      console.log('Image uploaded to IPFS:', uploadResult);
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      setError(`Failed to upload image: ${error.message}`);
-      // Reset the file input
-      e.target.value = '';
-    } finally {
-      setIsUploadingImage(false);
-    }
-  };
+  //     console.log('Image uploaded to IPFS:', uploadResult);
+  //   } catch (error) {
+  //     console.error('Error uploading image:', error);
+  //     setError(`Failed to upload image: ${error.message}`);
+  //     // Reset the file input
+  //     e.target.value = '';
+  //   } finally {
+  //     setIsUploadingImage(false);
+  //   }
+  // };
 
   const nextStep = () => {
     if (currentStep < 4) setCurrentStep(currentStep + 1);
@@ -100,13 +135,19 @@ export default function Create() {
       const mintPrice = ethers.parseEther(formData.price);
       // Get the collection creation price (LLM generation fee)
       const creationPrice = await factory.getCollectionPrice();
+
+      // Determine parent collection ID
+      const parentId =
+        isForking && parentCollection ? parseInt(parentCollection.id) : 0;
+
       const transaction = await factory.createCollection(
         formData.name,
         symbol,
         formData.prompt,
-        formData.referenceImageUrl || '', // Pass reference image URL or empty string
+        formData.referenceImageUrl || '',
         parseInt(formData.supply),
         mintPrice,
+        parentId,
         { value: creationPrice }
       );
       if (formData.referenceImageUrl) {
@@ -374,8 +415,33 @@ export default function Create() {
     <div className="container mx-auto px-4 py-8 max-w-2xl">
       <div className="mb-8">
         <h1 className="text-4xl font-bold text-gray-800 mb-4">
-          Create AI Collection
+          {isForking ? 'Fork AI Collection' : 'Create AI Collection'}
         </h1>
+        {isForking && parentCollection && (
+          <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-6">
+            <div className="flex items-center gap-4">
+              <div className="w-8 h-8 overflow-hidden rounded-lg flex-shrink-0">
+                <CollectionCover
+                  contractAddress={parentCollection.contractAddress}
+                  alt={parentCollection.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm text-purple-700 font-medium">
+                  🍴 Forking from:{' '}
+                  <span className="font-bold">{parentCollection.name}</span>
+                </p>
+                {/* <p className="text-xs text-purple-600 mt-1">
+                  Original prompt: &quot;{parentCollection.prompt}&quot;
+                </p> */}
+                {/* <p className="text-xs text-purple-500 mt-1 font-mono">
+                  {parentCollection.contractAddress}
+                </p> */}
+              </div>
+            </div>
+          </div>
+        )}
         <div className="flex items-center space-x-4">
           {[1, 2, 3, 4].map((step) => (
             <div key={step} className="flex items-center">

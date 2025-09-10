@@ -11,6 +11,7 @@ import Web3Button from '../components/Web3Button';
 export default function Collection() {
   const { collectionId } = useParams();
   const [collection, setCollection] = useState(null);
+  const [parentCollection, setParentCollection] = useState(null);
   const [loadingState, setLoadingState] = useState('not-loaded');
   const [collectionContract, setCollectionContract] = useState(null);
   const { getProvider, getSigner } = useProvider();
@@ -61,14 +62,34 @@ export default function Collection() {
         mintPrice: ethers.formatEther(dynamicPrice),
         creator: collectionInfo.creator,
         prompt: collectionInfo.prompt,
+        parentId: collectionInfo.parentId.toString(),
       };
       setCollection(collectionData);
+      
+      // Load parent collection info if this is a fork
+      if (collectionInfo.parentId && parseInt(collectionInfo.parentId.toString()) > 0) {
+        loadParentCollection(collectionInfo.parentId.toString(), factoryContract);
+      }
+      
       setLoadingState('loaded');
     } catch (error) {
       console.error('Error loading collection data:', error);
       setLoadingState('error');
     }
   }
+
+  const loadParentCollection = async (parentId, factoryContract) => {
+    try {
+      const parentInfo = await factoryContract.collectionInfo(parentId);
+      setParentCollection({
+        id: parentId,
+        name: parentInfo.name,
+        contractAddress: parentInfo.contractAddress,
+      });
+    } catch (error) {
+      console.error('Error loading parent collection:', error);
+    }
+  };
 
   async function initializeContract() {
     try {
@@ -143,6 +164,10 @@ export default function Collection() {
     }
   }
 
+  const handleForkClick = () => {
+    window.location.href = `/create?forkFrom=${collection.id}`;
+  };
+
   if (loadingState === 'error') {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
@@ -193,9 +218,16 @@ export default function Collection() {
               />
             </div>
             <div className="flex-1 min-w-0">
-              <h1 className="text-2xl font-bold text-gray-800 mb-2">
-                {collection.name}
-              </h1>
+              <div className="flex items-center gap-2 mb-2">
+                <h1 className="text-2xl font-bold text-gray-800">
+                  {collection.name}
+                </h1>
+                {collection.parentId && parseInt(collection.parentId) > 0 && (
+                  <span className="bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded-full">
+                    Fork
+                  </span>
+                )}
+              </div>
               <p className="text-gray-600 text-sm mb-4 line-clamp-2">
                 {collection.prompt}
               </p>
@@ -227,9 +259,26 @@ export default function Collection() {
                     copyable
                   />
                 </div>
+                {collection.parentId && parseInt(collection.parentId) > 0 && (
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-500">Forked from:</span>
+                    <a
+                      href={`/collection/${collection.parentId}`}
+                      className="font-medium text-purple-600 hover:text-purple-800 transition-colors"
+                    >
+                      {parentCollection ? parentCollection.name : `Collection #${collection.parentId}`}
+                    </a>
+                  </div>
+                )}
               </div>
             </div>
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 flex gap-3">
+              <Web3Button
+                onClick={handleForkClick}
+                className="bg-gradient-to-r from-green-600 to-teal-600 text-white font-bold py-2 px-4 rounded-lg hover:shadow-lg transition-all duration-200 transform hover:scale-105 cursor-pointer"
+              >
+                Fork
+              </Web3Button>
               <Web3Button
                 className="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:shadow-lg transition-all duration-200 transform hover:scale-105 cursor-pointer"
                 onClick={mintNft}

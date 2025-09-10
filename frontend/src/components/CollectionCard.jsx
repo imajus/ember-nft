@@ -1,7 +1,14 @@
 import CollectionCover from './CollectionCover';
 import AddressDisplay from './AddressDisplay';
+import Web3Button from './Web3Button';
 
 export default function CollectionCard({ collection }) {
+  const isForked = collection.parentId && parseInt(collection.parentId) > 0;
+
+  const handleForkClick = () => {
+    window.location.href = `/create?forkFrom=${collection.id}`;
+  };
+
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-200">
       <div className="aspect-square overflow-hidden relative">
@@ -10,6 +17,11 @@ export default function CollectionCard({ collection }) {
           alt={collection.name}
           className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
         />
+        {isForked && (
+          <div className="absolute top-2 left-2 bg-purple-600 text-white text-xs px-2 py-1 rounded-full">
+            Fork
+          </div>
+        )}
       </div>
       <div className="p-6">
         <h3 className="text-xl font-bold text-gray-800 mb-2 truncate">
@@ -31,12 +43,20 @@ export default function CollectionCard({ collection }) {
               {collection.mintPrice} ETH
             </p>
           </div>
-          <a
-            href={`/collection/${collection.id}`}
-            className="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:shadow-lg transition-all duration-200 transform hover:scale-105"
-          >
-            View
-          </a>
+          <div className="flex gap-2">
+            <Web3Button
+              onClick={handleForkClick}
+              className="bg-gradient-to-r from-green-600 to-teal-600 text-white font-bold py-2 px-4 rounded-lg hover:shadow-lg transition-all duration-200 transform hover:scale-105 text-sm cursor-pointer"
+            >
+              Fork
+            </Web3Button>
+            <a
+              href={`/collection/${collection.id}`}
+              className="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:shadow-lg transition-all duration-200 transform hover:scale-105"
+            >
+              View
+            </a>
+          </div>
         </div>
       </div>
     </div>
