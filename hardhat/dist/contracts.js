@@ -2130,7 +2130,7 @@ const abis = {
 
 const deployments = {
   "50312": {
-    "NFTCollectionFactoryModule#NFTCollectionFactory": "0xF1757492Ec2A750769729ac94cB6DF95478a3219"
+    "NFTCollectionFactoryModule#NFTCollectionFactory": "0x1bEDdc4CE852E3fE0101eaBA2f717baaFD1571eB"
   }
 };
 
