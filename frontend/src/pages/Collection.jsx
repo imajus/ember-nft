@@ -65,12 +65,18 @@ export default function Collection() {
         parentId: collectionInfo.parentId.toString(),
       };
       setCollection(collectionData);
-      
+
       // Load parent collection info if this is a fork
-      if (collectionInfo.parentId && parseInt(collectionInfo.parentId.toString()) > 0) {
-        loadParentCollection(collectionInfo.parentId.toString(), factoryContract);
+      if (
+        collectionInfo.parentId &&
+        parseInt(collectionInfo.parentId.toString()) > 0
+      ) {
+        loadParentCollection(
+          collectionInfo.parentId.toString(),
+          factoryContract
+        );
       }
-      
+
       setLoadingState('loaded');
     } catch (error) {
       console.error('Error loading collection data:', error);
@@ -163,10 +169,6 @@ export default function Collection() {
       alert('Error minting NFT: ' + (error.reason || error.message));
     }
   }
-
-  const handleForkClick = () => {
-    window.location.href = `/create?forkFrom=${collection.id}`;
-  };
 
   if (loadingState === 'error') {
     return (
@@ -266,19 +268,21 @@ export default function Collection() {
                       href={`/collection/${collection.parentId}`}
                       className="font-medium text-purple-600 hover:text-purple-800 transition-colors"
                     >
-                      {parentCollection ? parentCollection.name : `Collection #${collection.parentId}`}
+                      {parentCollection
+                        ? parentCollection.name
+                        : `Collection #${collection.parentId}`}
                     </a>
                   </div>
                 )}
               </div>
             </div>
             <div className="flex-shrink-0 flex gap-3">
-              <Web3Button
-                onClick={handleForkClick}
+              <a
+                href={`/create?forkFrom=${collection.id}`}
                 className="bg-gradient-to-r from-green-600 to-teal-600 text-white font-bold py-2 px-4 rounded-lg hover:shadow-lg transition-all duration-200 transform hover:scale-105 cursor-pointer"
               >
                 Fork
-              </Web3Button>
+              </a>
               <Web3Button
                 className="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:shadow-lg transition-all duration-200 transform hover:scale-105 cursor-pointer"
                 onClick={mintNft}

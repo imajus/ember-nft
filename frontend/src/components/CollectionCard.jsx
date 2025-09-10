@@ -5,10 +5,6 @@ import Web3Button from './Web3Button';
 export default function CollectionCard({ collection }) {
   const isForked = collection.parentId && parseInt(collection.parentId) > 0;
 
-  const handleForkClick = () => {
-    window.location.href = `/create?forkFrom=${collection.id}`;
-  };
-
   return (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-200">
       <div className="aspect-square overflow-hidden relative">
@@ -44,12 +40,12 @@ export default function CollectionCard({ collection }) {
             </p>
           </div>
           <div className="flex gap-2">
-            <Web3Button
-              onClick={handleForkClick}
+            <a
+              href={`/create?forkFrom=${collection.id}`}
               className="bg-gradient-to-r from-green-600 to-teal-600 text-white font-bold py-2 px-4 rounded-lg hover:shadow-lg transition-all duration-200 transform hover:scale-105 text-sm cursor-pointer"
             >
               Fork
-            </Web3Button>
+            </a>
             <a
               href={`/collection/${collection.id}`}
               className="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:shadow-lg transition-all duration-200 transform hover:scale-105"
