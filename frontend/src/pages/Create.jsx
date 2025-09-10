@@ -141,7 +141,7 @@ export default function Create() {
       const transaction = await factory.createCollection(
         formData.name,
         symbol,
-        formData.prompt,
+        formData.prompt.replace(/\s+/g, ' ').trim(),
         formData.referenceImageUrl || '',
         parseInt(formData.supply),
         mintPrice,
