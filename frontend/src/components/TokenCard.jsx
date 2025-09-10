@@ -51,7 +51,7 @@ export default function TokenCard({ tokenId, collection }) {
       const owner = await collectionContract.ownerOf(tokenId);
       const tokenURI = await collectionContract.tokenURI(tokenId);
       const isGenerated = await collectionContract.isTokenGenerated(tokenId);
-      let imageUrl = token.image;
+      let imageUrl;
       let tokenName = `Token #${tokenId}`;
       if (isGenerated && tokenURI) {
         try {
@@ -68,22 +68,22 @@ export default function TokenCard({ tokenId, collection }) {
           imageUrl = '/error.gif';
         }
       }
-      const tokenData = {
+      setToken((prev) => ({
+        ...prev,
         tokenId,
         owner,
         tokenURI,
         isGenerated,
-        image: imageUrl,
+        image: imageUrl ?? prev.image,
         name: tokenName,
         isLoading: false,
-      };
-      setToken(tokenData);
+      }));
     } catch (error) {
       console.error(`Error loading token ${tokenId}:`, error);
       setToken((prev) => ({
         ...prev,
         isLoading: false,
-        image: null,
+        image: '/error.gif',
       }));
     }
   }
@@ -92,7 +92,7 @@ export default function TokenCard({ tokenId, collection }) {
     if (!newTokenURI) return;
     const updateToken = async () => {
       try {
-        let imageUrl = token.image;
+        let imageUrl;
         let tokenName = null;
         try {
           const metadata = await fetchTokenMetadata(newTokenURI);
@@ -107,17 +107,20 @@ export default function TokenCard({ tokenId, collection }) {
           );
           imageUrl = '/error.gif';
         }
-        const updatedToken = {
-          ...token,
+        setToken((prev) => ({
+          ...prev,
           tokenURI: newTokenURI,
           isGenerated: true,
-          image: imageUrl,
+          image: imageUrl ?? prev.image,
           ...(tokenName && { name: tokenName }),
-        };
-        setToken(updatedToken);
+        }));
         console.log(`Updated token ${tokenId} image: ${imageUrl}`);
       } catch (error) {
         console.error(`Error updating token ${tokenId} image:`, error);
+        setToken((prev) => ({
+          ...prev,
+          image: '/error.gif',
+        }));
       }
     };
     updateToken();
