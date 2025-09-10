@@ -189,50 +189,46 @@ export default function Dashboard() {
                 key={collection.id}
                 className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow"
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    <CollectionCover
-                      contractAddress={collection.contractAddress}
-                      alt={collection.name}
-                      className="w-16 h-16 rounded-lg object-cover"
-                    />
-                    <div>
-                      <h3 className="text-xl font-semibold text-gray-800">
-                        {collection.name}
-                      </h3>
-                      <p className="text-gray-600 text-sm">
-                        {collection.description}
-                      </p>
-                      <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500">
-                        <span>
-                          {collection.minted.toString()}/
-                          {collection.maxSupply.toString()} minted
-                        </span>
-                        <span>•</span>
-                        <span>{collection.price} ETH each</span>
-                        <span>•</span>
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs ${
-                            collection.status === 'active'
-                              ? 'bg-green-100 text-green-600'
-                              : collection.status === 'generating'
-                              ? 'bg-yellow-100 text-yellow-600'
-                              : 'bg-gray-100 text-gray-600'
-                          }`}
-                        >
-                          {collection.status}
-                        </span>
-                      </div>
+                <div className="flex items-start justify-between space-x-4">
+                  <CollectionCover
+                    contractAddress={collection.contractAddress}
+                    alt={collection.name}
+                    className="w-16 h-16 rounded-lg object-cover"
+                  />
+                  <div className="flex-1">
+                    <h3 className="text-xl font-semibold text-gray-800">
+                      {collection.name}
+                    </h3>
+                    <p className="text-gray-600 text-sm">
+                      {collection.description}
+                    </p>
+                    <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500">
+                      <span>
+                        {collection.minted.toString()}/
+                        {collection.maxSupply.toString()} minted
+                      </span>
+                      <span>•</span>
+                      <span>{collection.price} ETH each</span>
+                      <span>•</span>
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs ${
+                          collection.status === 'active'
+                            ? 'bg-green-100 text-green-600'
+                            : collection.status === 'generating'
+                            ? 'bg-yellow-100 text-yellow-600'
+                            : 'bg-gray-100 text-gray-600'
+                        }`}
+                      >
+                        {collection.status}
+                      </span>
                     </div>
                   </div>
-                  <div className="flex space-x-2">
-                    <a
-                      href={`/collection/${collection.id}`}
-                      className="px-4 py-2 text-purple-600 border border-purple-600 rounded-lg hover:bg-purple-50 transition-colors"
-                    >
-                      View
-                    </a>
-                  </div>
+                  <a
+                    href={`/collection/${collection.id}`}
+                    className="px-4 py-2 text-purple-600 border border-purple-600 rounded-lg hover:bg-purple-50 transition-colors"
+                  >
+                    View
+                  </a>
                 </div>
 
                 {/* Progress Bar */}
@@ -250,9 +246,9 @@ export default function Dashboard() {
                     <div
                       className="bg-gradient-to-r from-purple-600 to-blue-600 h-2 rounded-full transition-all duration-200"
                       style={{
-                        width: `${
-                          Number(collection.minted / collection.maxSupply) * 100
-                        }%`,
+                        width: `${Number(
+                          (100n * collection.minted) / collection.maxSupply
+                        )}%`,
                       }}
                     ></div>
                   </div>

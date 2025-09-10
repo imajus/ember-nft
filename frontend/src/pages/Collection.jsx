@@ -152,22 +152,17 @@ export default function Collection() {
 
   async function mintNft() {
     if (!collection) return;
-    try {
-      const signer = await getSigner();
-      const collectionContract = await getNFTCollection(
-        collection.contractAddress,
-        signer
-      );
-      const dynamicPrice = await collectionContract.getTokenPrice();
-      const transaction = await collectionContract.mint({
-        value: dynamicPrice,
-      });
-      await transaction.wait();
-      // Don't update supply count here - let the TokenMinted event handle it
-    } catch (error) {
-      console.error('Error minting NFT:', error);
-      alert('Error minting NFT: ' + (error.reason || error.message));
-    }
+    const signer = await getSigner();
+    const collectionContract = await getNFTCollection(
+      collection.contractAddress,
+      signer
+    );
+    const dynamicPrice = await collectionContract.getTokenPrice();
+    const transaction = await collectionContract.mint({
+      value: dynamicPrice,
+    });
+    await transaction.wait();
+    // Don't update supply count here - let the TokenMinted event handle it
   }
 
   if (loadingState === 'error') {
@@ -284,8 +279,8 @@ export default function Collection() {
                 Fork
               </a>
               <Web3Button
-                className="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:shadow-lg transition-all duration-200 transform hover:scale-105 cursor-pointer"
                 onClick={mintNft}
+                loadingText="Minting..."
               >
                 Mint ({collection.mintPrice} ETH)
               </Web3Button>

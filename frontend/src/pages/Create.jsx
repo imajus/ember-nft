@@ -18,7 +18,6 @@ export default function Create() {
     referenceImageUrl: null,
   });
   const [currentStep, setCurrentStep] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
   // const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [error, setError] = useState('');
   const [parentCollection, setParentCollection] = useState(null);
@@ -124,7 +123,6 @@ export default function Create() {
   };
 
   const handleSubmit = async () => {
-    setIsLoading(true);
     setError('');
     try {
       const signer = await getSigner();
@@ -176,8 +174,7 @@ export default function Create() {
     } catch (error) {
       console.error('Error creating collection:', error);
       setError(error.reason || error.message || 'Failed to create collection');
-    } finally {
-      setIsLoading(false);
+      throw error;
     }
   };
 
@@ -488,23 +485,15 @@ export default function Create() {
             <Web3Button
               onClick={handleSubmit}
               disabled={
-                isLoading ||
                 !formData.name ||
                 !formData.symbol ||
                 !formData.prompt ||
                 !formData.supply ||
                 !formData.price
               }
-              className="px-8 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg transition-all duration-200 flex items-center"
+              loadingText="Creating..."
             >
-              {isLoading ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Creating...
-                </>
-              ) : (
-                'Deploy Collection'
-              )}
+              Deploy Collection
             </Web3Button>
           ) : (
             <button

@@ -42,7 +42,7 @@ export default function CollectionCard({ collection }) {
           <div className="flex gap-2">
             <a
               href={`/create?forkFrom=${collection.id}`}
-              className="bg-gradient-to-r from-green-600 to-teal-600 text-white font-bold py-2 px-4 rounded-lg hover:shadow-lg transition-all duration-200 transform hover:scale-105 text-sm cursor-pointer"
+              className="bg-gradient-to-r from-green-600 to-teal-600 text-white font-bold py-2 px-6 rounded-lg hover:shadow-lg transition-all duration-200 transform hover:scale-105"
             >
               Fork
             </a>
