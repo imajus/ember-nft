@@ -14,7 +14,8 @@ Unlike traditional NFT platforms where artwork is pre-generated, our system gene
 
 - **For Creators**: Zero upfront costs, no technical barriers, AI-assisted creativity
 - **For Collectors**: Gamified minting experience, guaranteed uniqueness, dynamic pricing discovery
-- **For the Ecosystem**: Sustainable economics, reduced speculation, increased utility focus
+- **For Derivative Creators**: Access to proven concepts, ability to remix and earn without audience
+- **For the Ecosystem**: Sustainable economics, reduced speculation, increased utility focus, collaborative creation
 
 ## System Architecture Overview
 
@@ -103,6 +104,7 @@ graph TB
 - Multi-party payment splitting
 - Fee calculation and collection
 - Creator royalty distribution
+- Fork lineage revenue sharing
 - Platform fee management
 
 ### 5. Event Listener Service
@@ -114,8 +116,20 @@ graph TB
 - Real-time event monitoring
 - Mint event detection
 - AI generation triggering
+- Fork lineage prompt composition
 - Metadata update orchestration
 - IPFS upload management
+
+### 6. Collection Forking System
+
+**Purpose**: Enables derivative collections that build upon existing ones.
+
+**Key Features**:
+
+- Fork creation from any deployed collection
+- Lineage tracking and revenue distribution
+- Prompt inheritance and composition
+- Collaborative creation opportunities
 
 ## User Stories
 
@@ -162,6 +176,26 @@ journey
       Share Result: 5: Collector
 ```
 
+### Derivative Creator Journey
+
+```mermaid
+journey
+    title Derivative Creator Journey: Forking a Collection
+    section Discovery
+      Browse Collections: 5: Derivative Creator
+      Identify Promising Concepts: 4: Derivative Creator
+      Analyze Fork Potential: 4: Derivative Creator
+    section Forking
+      Connect Wallet: 3: Derivative Creator
+      Select Parent Collection: 5: Derivative Creator
+      Design Derivative Concept: 5: Derivative Creator
+      Configure New Collection: 4: Derivative Creator
+    section Launch
+      Deploy Fork: 3: Derivative Creator
+      Share Derivative: 5: Derivative Creator
+      Earn from Mints: 5: Derivative Creator
+```
+
 ### User Personas
 
 1. **Creative Creator Clara**
@@ -180,6 +214,11 @@ journey
    - Trader looking for profit opportunities
    - Needs: Rarity data, market analytics, quick flips
    - Pain points: Illiquid markets, unclear valuations
+
+4. **Derivative Creator David**
+   - Creative individual without established audience
+   - Needs: Access to proven concepts, ability to add unique value, fair earning opportunities
+   - Pain points: Difficulty launching original collections, lack of marketing reach, need for creative inspiration
 
 ## Data Flow Diagrams
 
@@ -324,7 +363,7 @@ stateDiagram-v2
 
 ### Fee Structure
 
-The platform implements a transparent fee structure where all costs are added on top of the creator's base price:
+The platform implements a transparent fee structure where all costs are added on top of the creator's base price. For forked collections, revenue is shared across the lineage chain.
 
 ```mermaid
 pie title "Total Minter Cost Breakdown (Example)"
@@ -334,7 +373,7 @@ pie title "Total Minter Cost Breakdown (Example)"
     "Storage" : 0.5
 ```
 
-**Fee Calculation Formula:**
+**Standard Collection Fee Calculation:**
 
 ```
 Total Minter Cost = Creator Price + (Creator Price × Platform Fee %) + AI Fee + Storage Fee
@@ -342,7 +381,15 @@ Creator Receives = Creator Price (100%)
 Platform Receives = Platform Fee + AI Fee + Storage Fee
 ```
 
-**Example:**
+**Fork Collection Revenue Distribution:**
+
+For forked collections, a portion of the creator's revenue is shared with the original creator and fork lineage:
+
+- Original Creator: 10% of mint price (constant across all fork levels)
+- Fork creators receive diminishing shares based on their position in the lineage
+- Current fork creator receives the remainder after lineage distributions
+
+**Example (Standard Collection):**
 
 - Creator sets price: 10 USDC
 - Platform fee (15%): 1.5 USDC
@@ -364,220 +411,15 @@ Platform Receives = Platform Fee + AI Fee + Storage Fee
    - Storage fee per mint
    - Set in smart contract constructor
 
-## NFT Collection Forking Feature
-
-### Feature Overview
-
-Introduce collection forking capability to the AI-powered NFT launchpad, enabling users to create derivative collections that build upon existing ones while maintaining lineage tracking and implementing revenue sharing mechanisms.
-
-### Business Value
-
-- **Creator Empowerment**: Enable remix culture and collaborative creation
-- **Revenue Streams**: Generate ongoing royalties for original creators through fork fees
-- **Community Growth**: Foster ecosystem engagement through derivative works
-- **Innovation**: Enable prompt evolution and iterative improvement
-
-### Core Forking Functionality
-
-#### Fork Creation Process
-
-- **Eligibility**: Any deployed NFT collection can be forked by any user
-- **Fork Inheritance**: Forked collections only inherit the original collection's prompt
-- All other properties (name, symbol, reference image, max supply, mint price) are user-configured from scratch
-
-#### Lineage Tracking
-
-- **Parent Reference**: Each fork stores immutable reference to parent collection address
-- Lineage traversal handled by factory contract for fee distribution
-
-#### Enhanced Metadata
-
-New collection properties:
-
-```solidity
-address public parentCollection;     // Direct parent (address(0) for originals)
-```
-
-### Revenue Sharing System
-
-#### Fee Distribution Formula
-
-For each mint in a forked collection, fees are distributed according to diminishing returns:
-
-```
-Original Creator: 10% (constant across all fork levels)
-Fork Level 1: 5.0%
-Fork Level 2: 2.5%
-Fork Level 3: 1.25%
-Fork Level n: 5% / (2^(n-1))
-```
-
-#### Payment Flow
-
-- Fork creator pays same LLM_GENERATION_FEE (0.001 ETH) to factory
-- Factory calculates lineage fees and creates appropriate payees/amounts arrays
-- Each mint distributes payments according to pre-calculated lineage structure
-- Platform fee (2.5%) remains unchanged
-
-#### Fee Calculation Example
-
-Fork Level 2 mint with 100 ETH price:
-
-- Original Creator: 10 ETH (10%)
-- First Fork Creator: 5 ETH (5%)
-- Current Fork Creator: 82.5 ETH (remaining after fees)
-- Platform: 2.5 ETH (2.5%)
-
-### AI Generation Enhancement
-
-#### Prompt Composition
-
-Generator service composes prompts by traversing lineage:
-
-```
-Final Prompt = Root Prompt + " " + Fork1 Prompt + " " + Fork2 Prompt + ...
-```
-
-#### Reference Image Handling
-
-- Forks can set their own reference image
-- If no reference image provided, no inheritance (standard behavior)
-
-#### Generation Pipeline
-
-Enhanced event processing:
-
-1. Detect `TokenMinted` event from any collection (original or fork)
-2. If fork detected, traverse lineage to collect all prompts
-3. Compose final prompt from root to current fork
-4. Generate image using composite prompt and fork's reference image
-5. Upload and update metadata as usual
-
-### Smart Contract Changes
-
-#### NFTCollectionFactory.sol Updates
-
-```solidity
-// New function
-function forkCollection(
-    address parentCollectionAddress,
-    string memory name,
-    string memory symbol,
-    string memory prompt,
-    string memory referenceImageUrl,
-    uint256 maxSupply,
-    uint256 mintPrice
-) external payable returns (uint256);
-
-// Helper function to calculate lineage fees
-function _calculateLineageFees(address parentCollection, uint256 mintPrice)
-    private view returns (address payable[] memory, uint256[] memory);
-
-// Helper function to get lineage
-function getCollectionLineage(address collection)
-    external view returns (address[] memory);
-```
-
-#### NFTCollection.sol Updates
-
-```solidity
-// Constructor extension - add optional parent parameter
-constructor(
-    string memory name,
-    string memory symbol,
-    string memory _prompt,
-    string memory _referenceImageUrl,
-    uint256 _maxSupply,
-    address _creator,
-    address _factory,
-    address payable[] memory _payees,
-    uint256[] memory _amounts,
-    address _parentCollection  // New optional parameter
-)
-
-// New state variable
-address public parentCollection;     // Direct parent (address(0) for originals)
-```
-
-### Frontend Integration
-
-#### Collection Browse Page
-
-- "Fork" button on each collection card
-- Fork count display (simple counter)
-
-#### Fork Creation Flow
-
-- Standard collection creation wizard (no pre-population)
-- Each wizard step displays parent collection info for reference:
-  - Parent collection image, name, symbol
-  - "Forking from: [Parent Name]" indicator
-  - Only show immediate parent (no lineage chain)
-- All form fields empty and user-configurable
-- Standard prompt input (no composition preview)
-
-#### Collection Detail Page
-
-- Display immediate parent collection (if fork)
-- Show if collection has been forked (fork count)
-- Simple "Fork this collection" button
-
-### Generator Service Changes
-
-#### Enhanced Event Processing
-
-```javascript
-// New functions in generator.js
-async processTokenMinted(event) {
-  const collection = await this.getCollectionInfo(event.address);
-
-  if (collection.parentCollection !== '0x0000000000000000000000000000000000000000') {
-    const lineage = await this.getCollectionLineage(event.address);
-    const compositePrompt = await this.composePromptFromLineage(lineage);
-    // Generate with composite prompt...
-  }
-}
-
-async composePromptFromLineage(lineage) {
-  // Traverse lineage and concatenate prompts
-}
-```
-
-#### Prompt Composition Logic
-
-- Fetch prompt from each collection in lineage
-- Concatenate with appropriate separators
-- Maintain coherent prompt structure for AI generation
-
-### Technical Implementation Plan
-
-#### Phase 1: Smart Contract Implementation
-
-1. Update NFTCollectionFactory.sol with fork functionality
-2. Modify NFTCollection.sol constructor for parent collection parameter
-3. Implement fee distribution with lineage support in factory
-4. Write comprehensive test suite
-5. Deploy to testnet
-
-#### Phase 2: Generator Service Updates
-
-1. Enhance blockchain listener for fork events
-2. Implement prompt composition logic
-3. Add lineage traversal functions
-4. Test composite prompt generation
-
-#### Phase 3: Frontend Integration
-
-1. Add fork creation UI to collection pages
-2. Update collection creation wizard with parent info display
-3. Update collection browse with fork indicators
-4. Add simple parent/fork relationship display
+3. **Fork Lineage Fees**
+   - Revenue sharing from derivative collections
+   - Diminishing returns model for sustainable growth
+   - Encourages original creation while enabling remixing
 
 ## Future Enhancements (Stretch Goals)
 
 ### Phase 2 Features
 
-- **Collection Forking**: Enable derivative collections with lineage tracking and revenue sharing
 - **Fork Hierarchy Display**: Visual representation of collection lineage trees
 - **Advanced Fork Analytics**: Statistics and performance tracking for fork networks
 - **Subscription Models**: Creator Pro tiers with advanced features
