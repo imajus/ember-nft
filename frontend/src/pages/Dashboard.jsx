@@ -147,7 +147,7 @@ export default function Dashboard() {
             Total Revenue
           </h3>
           <p className="text-3xl font-bold text-green-600">
-            {ethers.formatEther(stats.totalRevenue)} ETH
+            {ethers.formatEther(stats.totalRevenue)} STT
           </p>
         </div>
         <div className="bg-white rounded-xl p-6 border border-gray-200">
@@ -208,7 +208,7 @@ export default function Dashboard() {
                         {collection.maxSupply.toString()} minted
                       </span>
                       <span>•</span>
-                      <span>{collection.price} ETH each</span>
+                      <span>{collection.price} STT each</span>
                       <span>•</span>
                       <span
                         className={`px-2 py-1 rounded-full text-xs ${

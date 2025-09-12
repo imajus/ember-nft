@@ -331,7 +331,7 @@ export default function Create() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Mint Price (ETH)
+                Mint Price (STT)
               </label>
               <input
                 type="number"
@@ -343,7 +343,7 @@ export default function Create() {
                 min="0"
               />
               <p className="text-sm text-gray-500 mt-2">
-                Price per NFT in ETH. Set to 0 for free mint.
+                Price per NFT in STT. Set to 0 for free mint.
               </p>
             </div>
           </div>
@@ -397,7 +397,7 @@ export default function Create() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-800">Price</h3>
-                  <p className="text-gray-600">{formData.price} ETH</p>
+                  <p className="text-gray-600">{formData.price} STT</p>
                 </div>
               </div>
             </div>

@@ -272,7 +272,7 @@ export default function Collection() {
                     <div>
                       <NumberDisplay
                         value={collection.mintPrice}
-                        suffix="ETH"
+                        suffix="STT"
                         variant="primary"
                       />
                     </div>
@@ -322,7 +322,7 @@ export default function Collection() {
                 loadingText="Minting..."
                 className="py-2 px-6 lg:w-full"
               >
-                Mint ({collection.mintPrice} ETH)
+                Mint ({collection.mintPrice} STT)
               </Web3Button>
             </div>
           </div>

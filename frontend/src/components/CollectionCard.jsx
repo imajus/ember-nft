@@ -41,7 +41,7 @@ export default function CollectionCard({ collection }) {
             <p className="text-2xl font-bold text-purple-600">
               <NumberDisplay
                 value={collection.mintPrice}
-                suffix="ETH"
+                suffix="STT"
                 variant="primary"
                 className="text-lg"
               />
