@@ -35,13 +35,13 @@ export default function TokensList({ collection }) {
       </h2>
 
       {isLoading ? (
-        <div className="text-center py-16 bg-white rounded-xl shadow-lg">
+        <div className="text-center py-16 bg-white rounded-xl border border-gray-200">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
           <p className="text-gray-600 text-lg">Loading tokens...</p>
           <p className="text-gray-500 mt-2">Preparing token list</p>
         </div>
       ) : tokenIds.length === 0 ? (
-        <div className="text-center py-16 bg-white rounded-xl shadow-lg">
+        <div className="text-center py-16 bg-white rounded-xl border border-gray-200">
           <p className="text-gray-600 text-lg">
             No tokens have been minted yet.
           </p>

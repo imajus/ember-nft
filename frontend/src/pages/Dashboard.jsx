@@ -103,7 +103,7 @@ export default function Dashboard() {
         </p>
         <button
           onClick={() => connect()}
-          className="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:shadow-lg transition-all duration-200"
+          className="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-opacity-90 transition-all duration-200"
         >
           Connect Wallet
         </button>
@@ -126,7 +126,7 @@ export default function Dashboard() {
         <h1 className="text-4xl font-bold text-gray-800">Creator Dashboard</h1>
         <Link
           to="/create"
-          className="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:shadow-lg transition-all duration-200"
+          className="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-opacity-90 transition-all duration-200"
         >
           + New Collection
         </Link>
@@ -134,7 +134,7 @@ export default function Dashboard() {
 
       {/* Stats Cards */}
       <div className="grid md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white rounded-xl p-6 shadow-lg">
+        <div className="bg-white rounded-xl p-6 border border-gray-200">
           <h3 className="text-lg font-semibold text-gray-700 mb-2">
             Total Collections
           </h3>
@@ -142,7 +142,7 @@ export default function Dashboard() {
             {stats.totalCollections}
           </p>
         </div>
-        <div className="bg-white rounded-xl p-6 shadow-lg">
+        <div className="bg-white rounded-xl p-6 border border-gray-200">
           <h3 className="text-lg font-semibold text-gray-700 mb-2">
             Total Revenue
           </h3>
@@ -150,7 +150,7 @@ export default function Dashboard() {
             {ethers.formatEther(stats.totalRevenue)} ETH
           </p>
         </div>
-        <div className="bg-white rounded-xl p-6 shadow-lg">
+        <div className="bg-white rounded-xl p-6 border border-gray-200">
           <h3 className="text-lg font-semibold text-gray-700 mb-2">
             Total Minted
           </h3>
@@ -161,7 +161,7 @@ export default function Dashboard() {
       </div>
 
       {/* Collections List */}
-      <div className="bg-white rounded-xl shadow-lg p-6">
+      <div className="bg-white rounded-xl border border-gray-200 p-6">
         <h2 className="text-2xl font-bold text-gray-800 mb-6">
           My Collections
         </h2>
@@ -177,7 +177,7 @@ export default function Dashboard() {
             </p>
             <Link
               to="/create"
-              className="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:shadow-lg transition-all duration-200"
+              className="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-opacity-90 transition-all duration-200"
             >
               Create First Collection
             </Link>
@@ -187,7 +187,7 @@ export default function Dashboard() {
             {collections.map((collection) => (
               <div
                 key={collection.id}
-                className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow"
+                className="border border-gray-200 rounded-lg p-6 hover:border-gray-300 transition-colors"
               >
                 <div className="flex items-start justify-between space-x-4">
                   <CollectionCover

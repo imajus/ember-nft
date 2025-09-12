@@ -463,7 +463,7 @@ export default function Create() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-lg p-8">
+      <div className="bg-white rounded-xl border border-gray-200 p-8">
         {error && (
           <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
             {error}
@@ -503,7 +503,7 @@ export default function Create() {
                 (currentStep === 2 && !formData.prompt) ||
                 (currentStep === 3 && (!formData.supply || !formData.price))
               }
-              className="px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg transition-all duration-200"
+              className="px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-opacity-90 transition-all duration-200"
             >
               Next
             </button>

@@ -7,6 +7,7 @@ import CollectionCover from '../components/CollectionCover';
 import TokensList from '../components/TokensList';
 import AddressDisplay from '../components/AddressDisplay';
 import Web3Button from '../components/Web3Button';
+import NumberDisplay from '../components/NumberDisplay';
 
 export default function Collection() {
   const { collectionId } = useParams();
@@ -176,7 +177,7 @@ export default function Collection() {
         </p>
         <Link
           to="/explore"
-          className="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:shadow-lg transition-all duration-200"
+          className="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-opacity-90 transition-all duration-200"
         >
           Back to Explore
         </Link>
@@ -205,82 +206,121 @@ export default function Collection() {
           </Link>
         </div>
 
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
-          <div className="flex items-center gap-6">
-            <div className="w-20 h-20 overflow-hidden rounded-lg flex-shrink-0">
-              <CollectionCover
-                contractAddress={collection.contractAddress}
-                alt={collection.name}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-2">
-                <h1 className="text-2xl font-bold text-gray-800">
-                  {collection.name}
-                </h1>
-                {collection.parentId && parseInt(collection.parentId) > 0 && (
-                  <span className="bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded-full">
-                    Fork
-                  </span>
-                )}
-              </div>
-              <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                {collection.prompt}
-              </p>
-              <div className="flex flex-wrap items-center gap-x-8 gap-y-2 text-sm">
-                <div className="flex items-center gap-2">
-                  <span className="text-gray-500">Symbol:</span>
-                  <span className="font-medium">{collection.symbol}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-gray-500">Creator:</span>
-                  <AddressDisplay address={collection.creator} copyable />
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-gray-500">Supply:</span>
-                  <span className="font-medium">
-                    {collection.currentSupply} / {collection.maxSupply}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-gray-500">Price:</span>
-                  <span className="font-bold text-purple-600">
-                    {collection.mintPrice} ETH
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-gray-500">Contract:</span>
-                  <AddressDisplay
-                    address={collection.contractAddress}
-                    copyable
+        <div className="bg-white rounded-xl border border-gray-200 p-6 mb-8">
+          {/* Desktop layout with buttons on the right */}
+          <div className="lg:flex lg:gap-6">
+            {/* Main content area */}
+            <div className="flex-1 lg:min-w-0">
+              {/* Header section with image, title and prompt */}
+              <div className="flex items-start gap-6 mb-6">
+                <div className="w-20 h-20 overflow-hidden rounded-lg flex-shrink-0">
+                  <CollectionCover
+                    contractAddress={collection.contractAddress}
+                    alt={collection.name}
+                    className="w-full h-full object-cover"
                   />
                 </div>
-                {collection.parentId && parseInt(collection.parentId) > 0 && (
-                  <div className="flex items-center gap-2">
-                    <span className="text-gray-500">Forked from:</span>
-                    <a
-                      href={`/collection/${collection.parentId}`}
-                      className="font-medium text-purple-600 hover:text-purple-800 transition-colors"
-                    >
-                      {parentCollection
-                        ? parentCollection.name
-                        : `Collection #${collection.parentId}`}
-                    </a>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-2">
+                    <h1 className="text-2xl font-bold text-gray-800">
+                      {collection.name}
+                    </h1>
+                    {collection.parentId &&
+                      parseInt(collection.parentId) > 0 && (
+                        <span className="bg-purple-100 text-purple-700 text-xs px-2 py-1 rounded-full">
+                          Fork
+                        </span>
+                      )}
                   </div>
-                )}
+                  <p className="text-gray-600 text-sm line-clamp-2">
+                    {collection.prompt}
+                  </p>
+                </div>
+              </div>
+
+              {/* Properties section - compact and responsive */}
+              <div className="mb-6 lg:mb-0">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 text-sm">
+                  <div className="bg-gray-50 rounded-lg p-2 border border-gray-200">
+                    <div className="text-gray-500 text-xs uppercase tracking-wide mb-1">
+                      Symbol
+                    </div>
+                    <div className="font-semibold">{collection.symbol}</div>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-2 border border-gray-200">
+                    <div className="text-gray-500 text-xs uppercase tracking-wide mb-1">
+                      Creator
+                    </div>
+                    <div>
+                      <AddressDisplay address={collection.creator} copyable />
+                    </div>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-2 border border-gray-200">
+                    <div className="text-gray-500 text-xs uppercase tracking-wide mb-1">
+                      Supply
+                    </div>
+                    <div>
+                      <NumberDisplay
+                        value={`${collection.currentSupply} / ${collection.maxSupply}`}
+                      />
+                    </div>
+                  </div>
+                  <div className="bg-purple-50 rounded-lg p-2 border border-purple-200">
+                    <div className="text-purple-600 text-xs uppercase tracking-wide mb-1">
+                      Mint Price
+                    </div>
+                    <div>
+                      <NumberDisplay
+                        value={collection.mintPrice}
+                        suffix="ETH"
+                        variant="primary"
+                      />
+                    </div>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-2 border border-gray-200">
+                    <div className="text-gray-500 text-xs uppercase tracking-wide mb-1">
+                      Contract
+                    </div>
+                    <div>
+                      <AddressDisplay
+                        address={collection.contractAddress}
+                        copyable
+                      />
+                    </div>
+                  </div>
+                  {collection.parentId && parseInt(collection.parentId) > 0 && (
+                    <div className="bg-green-50 rounded-lg p-2 border border-green-200">
+                      <div className="text-green-600 text-xs uppercase tracking-wide mb-1">
+                        Forked from
+                      </div>
+                      <div>
+                        <a
+                          href={`/collection/${collection.parentId}`}
+                          className="text-green-700 hover:text-green-900 transition-colors"
+                        >
+                          {parentCollection
+                            ? parentCollection.name
+                            : `Collection #${collection.parentId}`}
+                        </a>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-            <div className="flex-shrink-0 flex gap-3">
+
+            {/* Action buttons - positioned on right for desktop, below content for mobile/tablet */}
+            <div className="flex flex-col md:flex-row lg:flex-col gap-3 lg:flex-shrink-0 lg:w-48 lg:items-start">
               <a
                 href={`/create?forkFrom=${collection.id}`}
-                className="bg-gradient-to-r from-green-600 to-teal-600 text-white font-bold py-2 px-4 rounded-lg hover:shadow-lg transition-all duration-200 transform hover:scale-105 cursor-pointer"
+                className="bg-gradient-to-r from-green-600 to-teal-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-opacity-90 transition-all duration-200 transform hover:scale-105 cursor-pointer text-center lg:w-full"
               >
-                Fork
+                Create Fork
               </a>
               <Web3Button
                 onClick={mintNft}
                 loadingText="Minting..."
+                className="py-2 px-6 lg:w-full"
               >
                 Mint ({collection.mintPrice} ETH)
               </Web3Button>

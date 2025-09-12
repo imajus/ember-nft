@@ -82,7 +82,7 @@ export default function Explore() {
         </p>
         <a
           href="/create"
-          className="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:shadow-lg transition-all duration-200"
+          className="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-opacity-90 transition-all duration-200"
         >
           Create First Collection
         </a>

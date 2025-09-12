@@ -4,12 +4,12 @@ import { useState } from 'react';
 const buttonVariants = {
   primary: {
     base: 'bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-2 px-6 rounded-lg transition-all duration-200',
-    enabled: 'hover:shadow-lg transform hover:scale-105 cursor-pointer',
+    enabled: 'hover:bg-opacity-90 transform hover:scale-105 cursor-pointer',
     disabled: 'opacity-60 cursor-not-allowed animate-pulse'
   },
   secondary: {
     base: 'bg-gradient-to-r from-green-600 to-teal-600 text-white font-bold py-2 px-4 rounded-lg transition-all duration-200',
-    enabled: 'hover:shadow-lg transform hover:scale-105 cursor-pointer',
+    enabled: 'hover:bg-opacity-90 transform hover:scale-105 cursor-pointer',
     disabled: 'opacity-60 cursor-not-allowed animate-pulse'
   }
 };

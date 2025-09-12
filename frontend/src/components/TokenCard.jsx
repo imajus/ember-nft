@@ -167,13 +167,20 @@ export default function TokenCard({ tokenId, collection }) {
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-200">
+    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:border-gray-300 transition-colors duration-200">
       <div className="aspect-square overflow-hidden relative">
         <img
           src={token.image}
           alt={`Token ${token.tokenId}`}
-          className="`w-full h-full object-cover transition-all duration-200 hover:scale-105"
+          className="w-full h-full object-cover transition-all duration-200 hover:scale-105"
         />
+        {!token.isLoading && !token.isGenerated && (
+          <div className="absolute top-2 left-2">
+            <span className="px-2 py-1 rounded text-xs bg-yellow-100 text-yellow-800 border border-yellow-200">
+              Pending
+            </span>
+          </div>
+        )}
       </div>
       <div className="p-4">
         <h3
@@ -192,26 +199,6 @@ export default function TokenCard({ tokenId, collection }) {
             {!token.isLoading && token.owner && (
               <>
                 Owner: <AddressDisplay address={token.owner} />
-              </>
-            )}
-          </p>
-          <p
-            className={
-              token.isLoading ? 'animate-pulse bg-gray-200 rounded h-4' : ''
-            }
-          >
-            {!token.isLoading && (
-              <>
-                Status:
-                <span
-                  className={`ml-1 px-2 py-1 rounded text-xs ${
-                    token.isGenerated
-                      ? 'bg-green-100 text-green-800'
-                      : 'bg-yellow-100 text-yellow-800'
-                  }`}
-                >
-                  {token.isGenerated ? 'Generated' : 'Pending'}
-                </span>
               </>
             )}
           </p>
